@@ -1,9 +1,3 @@
 [
-["index.html", "YOUR TITLE HERE Chapter 1 Introduction", " YOUR TITLE HERE YOUR NAMES HERE 2019-11-23 Chapter 1 Introduction "],
-["data-sources.html", "Chapter 2 Data sources", " Chapter 2 Data sources "],
-["data-transformation.html", "Chapter 3 Data transformation", " Chapter 3 Data transformation "],
-["missing-values.html", "Chapter 4 Missing values", " Chapter 4 Missing values "],
-["results.html", "Chapter 5 Results", " Chapter 5 Results "],
-["interactive-component.html", "Chapter 6 Interactive component", " Chapter 6 Interactive component "],
-["conclusion.html", "Chapter 7 Conclusion", " Chapter 7 Conclusion "]
+["missing-values.html", "Chapter 4 Missing values 4.1 snow missing pattern", " Chapter 4 Missing values library(readr) library(tidyr) library(tidyverse) library(extracat) #where I save my original data df=read.csv(&quot;~/Documents/STATW5702 Exploratory Data Analysis and Visualization/Final/Motor_Vehicle_Collisions_-_Crashes.csv&quot;, header = T, na.string = c(&quot;&quot;, &quot;NA&quot;), sep = &quot;,&quot;) df$year = substr(df$ACCIDENT.DATE, 7, 10) df2013_2018 = df[(df$year &gt; &quot;2013&quot; &amp; df$year &lt; &quot;2019&quot;),] df2013_2018 = df2013_2018 %&gt;% rename( CONT.FACTOR.VEHICLE.1 = CONTRIBUTING.FACTOR.VEHICLE.1, CONT.FACTOR.VEHICLE.2 = CONTRIBUTING.FACTOR.VEHICLE.2, CONT.FACTOR.VEHICLE.3 = CONTRIBUTING.FACTOR.VEHICLE.3, CONT.FACTOR.VEHICLE.4 = CONTRIBUTING.FACTOR.VEHICLE.4, CONT.FACTOR.VEHICLE.5 = CONTRIBUTING.FACTOR.VEHICLE.5, ) visna(df2013_2018[, -which(names(df2013_2018) %in% c(&quot;year&quot;))], sort = &quot;b&quot;) 4.1 snow missing pattern snow_data=read.csv(&#39;snowfall.csv&#39;) missing=snow_data%&gt;%group_by(Month)%&gt;%summarise(total.count = sum(na_count)) colnames(missing)[2]=&#39;value&#39; library(ggplot2) ggplot(data=missing,aes(x=fct_reorder(Month,-value),y=value))+ geom_bar(stat=&quot;identity&quot;)+ xlab(&#39;Month&#39;)+ ylab(&#39;Missing Amount&#39;)+ ggtitle(&quot;Sonw Fall Data Missing Pattern&quot;) ``` "]
 ]

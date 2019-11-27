@@ -1,2 +1,26 @@
 # Data sources
 
+We use the follwoing data sources.
+
+## Motor Vehicle Collisions - Crashes
+
+The Motor Vehicle Collisions - Crashes is collected from the NYC OpenData website. The data contains all police reported motor vehicle collisions in NYC since July 2012. Each row represents a crash event with 29 columns that describe the crash, including date, time, location, vehicle type, number of people injured, number of people killed, and contributing factors. For this project, we would only consider 2017 and 2018 data as we want to analyze the most recent collision data that has a complete year cycle.
+
+data url: https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95
+
+
+## Temperature Data:
+The website shows the average monthly and annual temperautre (F/Fahrenheit) at Central Park. We pick out the value in 2017-18 and save them in a new cvs file, which each row contains `date` and `temperature` value.Based on this data, we plan to find a correlation between temperature and number of collision by month. Although data only contains the temperature value at Central Park, it is representive, since the New York City temperature does not vary by a lot.
+
+data url: https://www.weather.gov/media/okx/Climate/CentralPark/monthlyannualtemp.pdf
+
+## Humidity Data:
+The website shows the past weather information in New York. We collect the average monthly humidity(%) value in 2017-18 and store them in a new cvs file. The file has `date` and `humidty` column. We try to find a correlation bewteen humidity and collision of spefific reason.
+
+data url: https://www.timeanddate.com/weather/usa/new-york/historic?month=1&year=2017
+
+## Snow Data:
+The website shows Monthly & Annual Snowfall at Central Park. We only care about the value in 2017-18 and store them in a new cvs file. The file has `date` and `snowfall` column. We try to find a correlation bewteen snowfall and number of collision by month. For example, is there any possible that more collision happen in winter, because snow obstruct the view. Two months have missing value.
+
+data url: https://www.weather.gov/media/okx/Climate/CentralPark/monthlyseasonalsnowfall.pdf
+
