@@ -1,4 +1,6 @@
 # Missing values
+
+## Motor_Vehicle_Collisions - Crashes
 ```{r message=FALSE}
 library(readr)
 library(tidyr)
@@ -9,7 +11,7 @@ df=read.csv("~/Documents/STATW5702 Exploratory Data Analysis and Visualization/F
 ```
 ```{r fig.height = 15, warning=FALSE}
 df$year = substr(df$ACCIDENT.DATE, 7, 10)
-df2013_2018 = df[(df$year > "2013" & df$year < "2019"),]
+df2013_2018 = df[(df$year > "2012" & df$year < "2019"),]
 df2013_2018 = df2013_2018 %>%
   rename(
     CONT.FACTOR.VEHICLE.1 = CONTRIBUTING.FACTOR.VEHICLE.1,
@@ -22,7 +24,7 @@ visna(df2013_2018[, -which(names(df2013_2018) %in% c("year"))], sort = "b")
 ```
 
 
-## snow missing pattern
+## Snow Data Set
 
 ```{r}
 snow_data=read.csv('snowfall.csv')
