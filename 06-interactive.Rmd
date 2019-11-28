@@ -1,3 +1,11 @@
 # Interactive component
 
+```{r shiny, out.width=800}
+#rsconnect::setAccountInfo(name='wangzhili', token='B09C8D8E50307CC656D1923B26052F40', secret='20aRyensLBjkhvv6GDKO2yLnqcblxs6kYpbNqs1K')
 
+# library(shiny)
+
+# runApp("Shiny")
+knitr::include_app(" https://wangzhili.shinyapps.io/wordcloud/", 
+  height = "600px")
+```
