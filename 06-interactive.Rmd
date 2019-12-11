@@ -2,10 +2,18 @@
 
 ```{r shiny, out.width=800}
 #rsconnect::setAccountInfo(name='wangzhili', token='B09C8D8E50307CC656D1923B26052F40', secret='20aRyensLBjkhvv6GDKO2yLnqcblxs6kYpbNqs1K')
-
 # library(shiny)
-
 # runApp("Shiny")
+
+# Clean data part
+#library(tidyverse)
+#data <- read.csv("C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/Motor_Vehicle_Collisions_-_Crashes.csv", #header=T, na.strings=c("","NA"))
+#df <- data%>%select(ACCIDENT.DATE, LATITUDE, LONGITUDE, NUMBER.OF.PERSONS.INJURED, NUMBER.OF.PERSONS.KILLED, CONTRIBUTING.FACTOR.VEHICLE.1, VEHICLE.TYPE.CODE.1)
+#df$year = substr(df$ACCIDENT.DATE, 7, 10)
+#df = df[(df$year >"2012" & df$year <"2019"),]
+#write_csv(df,"C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/data.csv")
+
+# Running R
 knitr::include_app(" https://wangzhili.shinyapps.io/wordcloud/", 
   height = "600px")
 ```
