@@ -1,1 +1,505 @@
+```{r setup, include=FALSE}
+ # keep this chunk in your .Rmd file
+ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
 # Results
+
+```{r message=FALSE}
+library(lubridate)
+library(ggplot2)
+#library(dplyr)
+library(ggrepel)
+#library(tidyverse)
+library(ggmap)
+library(dplyr)
+library(lubridate)
+library(chron)
+```
+```{r message=FALSE}
+library(readr)
+library(tidyr)
+library(tidyverse)
+library(extracat)
+#where I save my original data
+df=read.csv("../Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
+```
+
+```{r fig.height = 15, warning=FALSE}
+df$year = substr(df$ACCIDENT.DATE, 7, 10)
+df2013_2018 = df[(df$year > "2012" & df$year < "2019"),]
+df2013_2018 = df2013_2018 %>%
+  rename(
+    CONT.FACTOR.VEHICLE.1 = CONTRIBUTING.FACTOR.VEHICLE.1,
+    CONT.FACTOR.VEHICLE.2 = CONTRIBUTING.FACTOR.VEHICLE.2,
+    CONT.FACTOR.VEHICLE.3 = CONTRIBUTING.FACTOR.VEHICLE.3,
+    CONT.FACTOR.VEHICLE.4 = CONTRIBUTING.FACTOR.VEHICLE.4,
+    CONT.FACTOR.VEHICLE.5 = CONTRIBUTING.FACTOR.VEHICLE.5,
+  )
+
+```
+
+```{r}
+#number of collision per year
+x= table(df2013_2018$year)
+
+#number of injury per yer
+#summary by year
+
+df2013_2018 = mutate(df2013_2018, NUMBER.OF.PERSONS.INJURED = ifelse(is.na(NUMBER.OF.PERSONS.INJURED), 0, as.numeric(NUMBER.OF.PERSONS.INJURED)))
+df2013_2018 = mutate(df2013_2018, NUMBER.OF.PERSONS.KILLED = ifelse(is.na(NUMBER.OF.PERSONS.KILLED), 0, as.numeric(NUMBER.OF.PERSONS.KILLED)))
+
+df_year_summary = df2013_2018%>%group_by(df2013_2018$year)%>%summarise(total.count = n(), sum(NUMBER.OF.PERSONS.KILLED), sum(NUMBER.OF.PERSONS.INJURED))
+```
+
+
+```{r}
+#number of collision per year
+table(df2013_2018$year)
+```
+
+```{r}
+#only keep the data with long and latitude not equal to NA and within New York City's range
+df2013_2018rm = df2013_2018[complete.cases(df2013_2018$LATITUDE), ]
+df2013_2018rm = df2013_2018rm[as.numeric(df2013_2018rm$LONGITUDE) > -74.4, ]
+df2013_2018rm = df2013_2018rm[as.numeric(df2013_2018rm$LONGITUDE)< -73.6, ]
+df2013_2018rm = df2013_2018rm[as.numeric(df2013_2018rm$LATITUDE)< 41, ]
+df2013_2018rm = df2013_2018rm[as.numeric(df2013_2018rm$LATITUDE) > 40.4, ]
+```
+
+
+
+```{r}
+#get google map's of New York City
+#graph that covers all New York City region
+y <- ggmap(get_googlemap(center = c(lon = -74.0097535, lat = 40.6969571),
+                    zoom = 10, scale = 2,
+                    maptype ='roadmap',
+                    color = 'color'))
+```
+
+```{r}
+#zoom in graph
+map_z11_2 <- ggmap(get_googlemap(center = c(lon = -74.006266, lat = 40.7242551),
+                    zoom = 11, scale = 2,
+                    maptype ='roadmap',
+                    color = 'color'))
+
+```
+
+```{r}
+#need to change the coordinate in order to add hexagon heatmap
+y_g = y +coord_equal()
+map_z11_2_g = map_z11_2 +coord_equal()
+```
+
+```{r}
+#hexagon heatmap for collision
+y_g + geom_hex(aes(x = LONGITUDE, y = LATITUDE,
+                 fill = cut(..count.., c(0, 750, 1500, 2250, 3000,
+                                         3750, 4500, 5250, 6000, Inf))), 
+             colour = NA,
+             data = df2013_2018rm, 
+             alpha = 0.75, 
+             bins = 90)+
+    scale_fill_brewer(palette = "OrRd",
+                      labels = c("<750", "750-1500", "1500-2250",
+                                 "2250-3000", "3000-3750",
+                                 "3750-4500", "4500-5250",
+                                 "5250-6000", ">6000")) +
+  theme(legend.title=element_blank())+
+  ggtitle("2013-2018 collision count-All points in NYC")
+
+```
+
+
+```{r}
+#hexagon heatmap for collision zoom in version
+map_z11_2_g + geom_hex(aes(x = LONGITUDE, y = LATITUDE,
+                 fill = cut(..count.., c(0, 750, 1500, 2250, 3000,
+                                         3750, 4500, 5250, 6000, Inf))), 
+             colour = NA,
+             data = df2013_2018rm, 
+             alpha = 0.75, 
+             bins = 50)+
+    scale_fill_brewer(palette = "OrRd",
+                      labels = c("<750", "750-1500", "1500-2250",
+                                 "2250-3000", "3000-3750",
+                                 "3750-4500", "4500-5250",
+                                 "5250-6000", ">6000")) +
+  theme(legend.title=element_blank())+
+  ggtitle("2013-2018 collision count")
+
+```
+
+```{r}
+#number of person killed
+df2013_2018rm= mutate(df2013_2018rm, NUMBER.OF.PERSONS.KILLED = ifelse(is.na(NUMBER.OF.PERSONS.KILLED), 0,as.numeric(NUMBER.OF.PERSONS.KILLED)))
+
+df_pkillnozero = filter(df2013_2018rm, df2013_2018rm$NUMBER.OF.PERSONS.KILLED != 0)
+map_z11_2_g + stat_summary_hex(aes(x = LONGITUDE, y = LATITUDE, z = NUMBER.OF.PERSONS.KILLED,
+                 fill = cut(..value.., c(0, 2, 4, 6, 8,
+                                         10, Inf))), 
+             colour = NA,
+             fun = sum,
+             data = df_pkillnozero, 
+             alpha = 0.75, 
+             bins = 50)+
+    scale_fill_brewer(palette = "OrRd",
+                      labels = c("<2", "2-4", "4-6",
+                                 "6-8", "8-10",
+                                 ">10")) +
+  theme(legend.title=element_blank())+
+  ggtitle("2013-2018 number of person killed")
+```
+
+
+
+```{r}
+#set na data to 0 and remove 0 data 
+df2013_2018rm= mutate(df2013_2018rm, NUMBER.OF.PERSONS.INJURED = ifelse(is.na(NUMBER.OF.PERSONS.INJURED), 0,as.numeric(NUMBER.OF.PERSONS.INJURED)))
+
+df_pinnozero = filter(df2013_2018rm, df2013_2018rm$NUMBER.OF.PERSONS.INJURED != 0)
+map_z11_2_g + stat_summary_hex(aes(x = LONGITUDE, y = LATITUDE, z = NUMBER.OF.PERSONS.INJURED,
+                 fill = cut(..value.., c(0, 100, 200, 300, 400,
+                                         500, 600, 700, 800, Inf))), 
+             colour = NA,
+             fun = sum,
+             data = df_pinnozero, 
+             alpha = 0.75, 
+             bins = 50)+
+    scale_fill_brewer(palette = "OrRd",
+                      labels = c("<100", "100-200", "200-300",
+                                 "300-400", "400-500",
+                                 "500-600", "600-700",
+                                 "700-800", ">800")) +
+  theme(legend.title=element_blank())+
+  ggtitle("2013-2018 number of person injuries")
+```
+
+```{r}
+#graph by season
+#add month
+df2013_2018rm$month = substr(df2013_2018rm$ACCIDENT.DATE, 1, 2)
+#add season
+df2013_2018rm = mutate(df2013_2018rm, season = ifelse(month == "12"| month =="01"|month =="11", "Winter", ifelse(month =="02"|month=="03"|month=="04", "Spring", ifelse(month =="05"|month =="06"|month == "07", "Summer", "Fall"))))
+#reorder season for plot.
+df2013_2018rm$season_order =  factor(df2013_2018rm$season, levels = c("Winter", "Spring", "Summer", "Fall"))
+map_z11_2_g+ geom_hex(aes(x = LONGITUDE, y = LATITUDE,
+                 fill = cut(..count.., c(0, 500, 1000, 1500, 3000,
+                                         3500, 4000, 4500, 5000, Inf))), 
+             colour = NA,
+             data = df2013_2018rm, 
+             alpha = 0.75, 
+             bins = 30)+
+    scale_fill_brewer(palette = "OrRd",
+                      labels = c("<500", "500-1000", "1000-1500",
+                                 "1500-2000", "2000-2500",
+                                 "2500-3000", "3000-3500",
+                                 "3500-4000", ">4000")) +
+  facet_wrap(~season_order)+
+  theme(legend.title=element_blank())+
+  ggtitle("2013-2018 collision count by season")
+
+```
+
+
+```{r}
+
+#data cleaning:
+#set na = 0 for number of person injured and killed
+#note df2017_18 is the dataset consider 2017 - 2018 collision data set
+df_vehical2 = mutate(df2013_2018, NUMBER.OF.PERSONS.INJURED = ifelse(is.na(NUMBER.OF.PERSONS.INJURED), 0, as.numeric(NUMBER.OF.PERSONS.INJURED)))
+df_vehical2 = mutate(df_vehical2, NUMBER.OF.PERSONS.KILLED = ifelse(is.na(NUMBER.OF.PERSONS.KILLED), 0, as.numeric(NUMBER.OF.PERSONS.KILLED)))
+
+#make the type equals all upper case
+df_vehical2 = df_vehical2[complete.cases(df_vehical2$VEHICLE.TYPE.CODE.1), ]
+df_vehical2$VEHICLE.TYPE.CODE.1= toupper(df_vehical2$VEHICLE.TYPE.CODE.1)
+df_vehical2[df_vehical2$VEHICLE.TYPE.CODE.1 == "STATION WAGON/SPORT UTILITY VEHICLE",]$VEHICLE.TYPE.CODE.1 ="SPORT UTILITY / STATION WAGON"
+
+#group by to get #number of collisions, person killed, person injuried by vehical type
+df_vehical2 = df_vehical2 %>%group_by(df_vehical2$VEHICLE.TYPE.CODE.1)%>%summarise(total.count = n(), sum(NUMBER.OF.PERSONS.KILLED), sum(NUMBER.OF.PERSONS.INJURED))
+
+
+colnames(df_vehical2) = c("Vehicle_Type", "Accidents", "Killed", "Injured")
+
+#reorder by number of accidents
+df_vehical2 = df_vehical2[order(df_vehical2$Accidents, decreasing = TRUE), ]
+#remove na vehical type
+
+df_vehical2_adj = df_vehical2[df_vehical2$Vehicle_Type != "UNKNOWN",]
+df_top15 = df_vehical2_adj[c(1:15),]
+
+#graph top20
+ggplot(aes(x = fct_reorder(Vehicle_Type, Accidents) , y=Accidents), data=df_top15) +
+  geom_bar(stat="identity")+ 
+  coord_flip()+
+  labs(x = "Vehicle Type", title = "2013 - 2018 top 15 Vehical Type for Collision")
+```
+
+
+
+```{r}
+#add death and injuried ratio to top20 data set
+df_top15$Inj_ratio = df_top15$Injured/df_top15$Accidents
+df_top15$Killed_ratio = df_top15$Killed/df_top15$Accidents
+
+df_top15inj = df_top15[order(df_top15$Inj_ratio, decreasing = TRUE), ]
+df_top15kill = df_top15[order(df_top15$Killed_ratio, decreasing = TRUE), ]
+
+#graph top20 injured ratio
+ggplot(aes(x = fct_reorder(Vehicle_Type, Inj_ratio) , y=Inj_ratio), data=df_top15inj) +
+  geom_bar(stat="identity")+ 
+  coord_flip()+
+  labs(x = "Vehicle Type", title = "Injured Ratio for 2017 - 2018 top 15 Vehical Type")
+
+#graph top20 death ratio
+ggplot(aes(x = fct_reorder(Vehicle_Type, Killed_ratio) , y=Killed_ratio), data=df_top15kill) +
+  geom_bar(stat="identity")+ 
+  coord_flip()+
+  labs(x = "Vehicle Type", title = "Death Ratio for 2017 - 2018 top 15 Vehical Type")
+
+```
+
+
+```{r}
+library(dygraphs)
+library(xts)
+df_date=df2013_2018%>%
+  group_by(df2013_2018$ACCIDENT.DATE)%>%
+  summarise(total.count = n())
+colnames(df_date)=c('MDY','value')
+df_date=df_date%>%
+  mutate(MDY=as.character(MDY))%>%
+  mutate(MDY=as.Date(MDY,format("%m/%d/%Y")))
+```
+```{r}
+interactive_date=xts(x=df_date$value,order.by=df_date$MDY)
+```
+```{r}
+dygraph(interactive_date,main='Number of accident in 2013-18',xlab = 'Date',
+  ylab='Number of accident')%>% 
+  dySeries("V1", label = "Accident number")%>%
+  dyRangeSelector()
+```
+Cannot see the pattern.Therefore, we combine the value in every month. 
+
+```{r}
+df_date_month=df2013_2018%>%
+  mutate(ACCIDENT.DATE=as.character(ACCIDENT.DATE))%>%
+  mutate(ACCIDENT.DATE=as.Date(ACCIDENT.DATE,format("%m/%d/%Y")))%>%
+  mutate(ACCIDENT.DATE=as.character(ACCIDENT.DATE))
+df_date_month$ACCIDENT.DATE=substr(df_date_month$ACCIDENT.DATE, 0, 8)
+df_date_month$ACCIDENT.DATE= paste(df_date_month$ACCIDENT.DATE,'01',sep="")
+df_date_month=df_date_month%>%group_by(df_date_month$ACCIDENT.DATE)%>%
+  summarise(total.count = n())
+colnames(df_date_month)=c('MDY','value')
+df_date_month=df_date_month%>%
+  mutate(MDY=as.Date(MDY,format("%Y-%m-%d")))
+```
+```{r}
+interactive_date_month=xts(x=df_date_month$value,order.by=df_date_month$MDY)
+```
+```{r}
+dygraph(interactive_date_month,main='Number of accident in 2013-18 by Month',xlab = 'Date',
+  ylab='Number of accident By month')%>% 
+  dySeries("V1", label = "Accident number")%>%
+  dyRangeSelector()
+```
+```{r}
+df_date_month_ggplot=df_date_month
+df_date_month_ggplot$year=substr(df_date_month_ggplot$MDY,0,4)
+df_date_month_ggplot$MDY=substr(df_date_month_ggplot$MDY,6,10)
+df_date_month_ggplot$MDY=as.Date(df_date_month_ggplot$MDY,'%m-%d')
+```
+```{r}
+ggplot(data=df_date_month_ggplot,aes(x=MDY,y=value,color=year))+
+  geom_line()+
+  scale_x_date(date_labels = "%b")+
+  guides(color = guide_legend(reverse = TRUE))+
+  xlab('month')+
+  ylab('number of accident')+
+  ggtitle('Number of Accident by Month in different Year')
+```
+
+Bar Chart of contribution factor
+```{r}
+temp=df2013_2018
+temp$CONT.FACTOR.VEHICLE.1= toupper(temp$CONT.FACTOR.VEHICLE.1)
+temp = temp %>%group_by(temp$CONT.FACTOR.VEHICLE.1)%>%summarise(total.count = n(), sum(NUMBER.OF.PERSONS.KILLED), sum(NUMBER.OF.PERSONS.INJURED))
+
+#reorder by number of accidents
+temp = temp[order(temp$total.count, decreasing = TRUE), ]
+#remove na vehical type
+temp= filter(temp, temp$`temp$CONT.FACTOR.VEHICLE.1` != "UNSPECIFIED")
+FACTOR20 = temp[c(1:20),]
+```
+```{r}
+ggplot(data=FACTOR20,aes(x=fct_reorder(`temp$CONT.FACTOR.VEHICLE.1`,`total.count`),y=`total.count`))+geom_bar(stat="identity")+xlab('Contribution Factor')+ylab('Number of Accident')+
+  ggtitle('Number of Accident by Different Contribution Factor')+
+  coord_flip()
+```
+Analysis top 5 contributin factor
+DRIVER INATTENTION/DISTRACTION
+```{r}
+df2013_2018$CONT.FACTOR.VEHICLE.1= toupper(df2013_2018$CONT.FACTOR.VEHICLE.1)
+inattention=df2013_2018
+inattention=filter(inattention,inattention$CONT.FACTOR.VEHICLE.1=='DRIVER INATTENTION/DISTRACTION')
+inattention$ACCIDENT.DATE=substr(inattention$ACCIDENT.DATE,0,2)
+inattention$ACCIDENT.DATE=paste(inattention$ACCIDENT.DATE,'-01',sep='')
+inattention=inattention%>%group_by(ACCIDENT.DATE)%>%summarise(total.count = n())
+inattention$ACCIDENT.DATE=as.Date(inattention$ACCIDENT.DATE,'%m-%d')
+inattention=inattention%>%mutate(reason='DRIVER INATTENTION/DISTRACTION')
+inattention$scalecount=100*inattention$`total.count`/inattention$`total.count`[1]
+```
+FAILURE TO YIELD RIGHT-OF-WAY
+```{r}
+factor2=df2013_2018
+factor2=filter(factor2,factor2$CONT.FACTOR.VEHICLE.1=='FAILURE TO YIELD RIGHT-OF-WAY')
+factor2$ACCIDENT.DATE=substr(factor2$ACCIDENT.DATE,0,2)
+factor2$ACCIDENT.DATE=paste(factor2$ACCIDENT.DATE,'-01',sep='')
+factor2=factor2%>%group_by(ACCIDENT.DATE)%>%summarise(total.count = n())
+factor2$ACCIDENT.DATE=as.Date(factor2$ACCIDENT.DATE,'%m-%d')
+factor2=factor2%>%mutate(reason='FAILURE TO YIELD RIGHT-OF-WAY')
+factor2$scalecount=100*factor2$`total.count`/factor2$`total.count`[1]
+```
+FOLLOWING TOO CLOSELY
+```{r}
+factor3=df2013_2018
+factor3=filter(factor3,factor3$CONT.FACTOR.VEHICLE.1=='FOLLOWING TOO CLOSELY')
+factor3$ACCIDENT.DATE=substr(factor3$ACCIDENT.DATE,0,2)
+factor3$ACCIDENT.DATE=paste(factor3$ACCIDENT.DATE,'-01',sep='')
+factor3=factor3%>%group_by(ACCIDENT.DATE)%>%summarise(total.count = n())
+factor3$ACCIDENT.DATE=as.Date(factor3$ACCIDENT.DATE,'%m-%d')
+factor3=factor3%>%mutate(reason='FOLLOWING TOO CLOSELY')
+factor3$scalecount=100*factor3$`total.count`/factor3$`total.count`[1]
+```
+BACKING UNSAFELY
+```{r}
+factor4=df2013_2018
+factor4=filter(factor4,factor4$CONT.FACTOR.VEHICLE.1=='BACKING UNSAFELY')
+factor4$ACCIDENT.DATE=substr(factor4$ACCIDENT.DATE,0,2)
+factor4$ACCIDENT.DATE=paste(factor4$ACCIDENT.DATE,'-01',sep='')
+factor4=factor4%>%group_by(ACCIDENT.DATE)%>%summarise(total.count = n())
+factor4$ACCIDENT.DATE=as.Date(factor4$ACCIDENT.DATE,'%m-%d')
+factor4=factor4%>%mutate(reason='BACKING UNSAFELY')
+factor4$scalecount=100*factor4$`total.count`/factor4$`total.count`[1]
+```
+OTHER VEHICULAR
+```{r}
+factor5=df2013_2018
+factor5=filter(factor5,factor5$CONT.FACTOR.VEHICLE.1=='OTHER VEHICULAR')
+factor5$ACCIDENT.DATE=substr(factor5$ACCIDENT.DATE,0,2)
+factor5$ACCIDENT.DATE=paste(factor5$ACCIDENT.DATE,'-01',sep='')
+factor5=factor5%>%group_by(ACCIDENT.DATE)%>%summarise(total.count = n())
+factor5$ACCIDENT.DATE=as.Date(factor5$ACCIDENT.DATE,'%m-%d')
+factor5=factor5%>%mutate(reason='OTHER VEHICULAR')
+factor5$scalecount=100*factor5$`total.count`/factor5$`total.count`[1]
+```
+```{r}
+top_5_factor=rbind(inattention,factor2,factor3,factor4,factor5)
+top_5_factor$reason <- factor(top_5_factor$reason , levels = c("FOLLOWING TOO CLOSELY", "DRIVER INATTENTION/DISTRACTION", "BACKING UNSAFELY","OTHER VEHICULAR","FAILURE TO YIELD RIGHT-OF-WAY"))
+```
+```{r}
+ggplot(data=top_5_factor,aes(x=`ACCIDENT.DATE`,y=scalecount,color=reason))+geom_line()+  scale_x_date(date_labels = "%b")+
+  xlab('month')+
+  ylab('number of accident')+
+  ggtitle('Time Series of Top 5 Contribution Factor')
+```
+```{r}
+df_temperature=read.csv('temperature1.csv')
+```
+```{r}
+colnames(df_temperature)[1]='date'
+df_temperature$month=rep((1:12),6)
+df_temperature1 = df_temperature
+df_temperature1=df_temperature1%>%group_by(df_temperature1$month)%>%summarise( sum(Temp))
+df_temperature1$`sum(Temp)`=df_temperature1$`sum(Temp)`/6
+```
+correlation analysis
+```{r}
+library("PerformanceAnalytics")
+new_df=cbind(df_temperature1$`sum(Temp)`,inattention$`total.count`,factor2$total.count,factor3$total.count,factor4$total.count,factor5$total.count)
+colnames(new_df)=c('temperature','inattention','FAILURE TO YIELD RIGHT-OF-WAY','FOLLOWING TOO CLOSELY','BACKING UNSAFELY','OTHER VEHICULAR')
+chart.Correlation(new_df, histogram=TRUE, pch=19)
+```
+
+
+
+
+
+
+Part2
+Rush hours have more collision
+distraction collision by time
+```{r}
+df_time=df2013_2018%>%mutate(ACCIDENT.TIME=as.character(ACCIDENT.TIME))
+colnames(df_time)[2]='time'
+df_time$time=paste(df_time$time, ":00", sep = "")
+df_time_1=df_time%>%
+  mutate(time=times(time))%>%
+  mutate(time=as.character(time))
+df_time_1$time=substr(df_time_1$time, 0, 3)
+df_time_1$time=paste(df_time_1$time,'00',sep="")
+df_time_1$year=substr(df_time_1$ACCIDENT.DATE, 7, 10)
+```
+```{r}
+df_time_summary=df_time_1%>%group_by(year,time)%>%summarise(total.count = n())
+```
+```{r}
+df_time_summary=df_time_summary%>%mutate(time=as.POSIXct(time, format = "%H:%M" , tz = "GMT"))
+```
+```{r}
+ggplot(data=df_time_summary,aes(x=time,y=`total.count`,color=year))+
+  geom_line()+
+  guides(color = guide_legend(reverse = TRUE))+
+  scale_x_datetime(date_labels = "%I:%M %p")+
+  xlab('Hour')+
+  ylab('number of accident')+
+  ggtitle('Number of Accident by Hour in different Year')
+```
+By Hour(Combine all year)
+```{r}
+df_hour_total=df_time_summary
+```
+```{r}
+df_hour_total=df_hour_total%>%group_by(time)%>%summarise(newtotal=sum(`total.count`))
+```
+Distraction
+
+```{r}
+df_distraction=df2013_2018[df2013_2018$`CONT.FACTOR.VEHICLE.1`=='DRIVER INATTENTION/DISTRACTION',]
+```
+```{r}
+library(lubridate)
+library(chron)
+df_distraction=df_distraction%>%mutate(ACCIDENT.TIME=as.character(ACCIDENT.TIME))
+colnames(df_distraction)[2]='time'
+df_distraction$time=paste(df_distraction$time,":00", sep = "")
+```
+```{r}
+df_distraction_1=df_distraction%>%
+  mutate(time=times(time))%>%
+  mutate(time=as.character(time))
+```
+```{r}
+df_distraction_1$time=substr(df_distraction_1$time,0,3)
+df_distraction_1$time=paste(df_distraction_1$time,'00',sep='')
+df_distraction_1_summary=df_distraction_1%>%group_by(time)%>%summarise(total.count = n())
+```
+```{r}
+df_distraction_1_summary=df_distraction_1_summary%>%mutate(time=as.POSIXct(time, format = "%H:%M" , tz = "GMT"))
+```
+```{r}
+df_distraction_summary=df_distraction_1_summary
+df_distraction_summary$total.count=df_distraction_summary$`total.count`/df_hour_total$newtotal
+```
+```{r}
+ggplot(data=df_distraction_summary,aes(x=time,y=`total.count`))+
+  geom_line()+
+  scale_x_datetime(date_labels = "%I:%M %p")+
+  ylim(0.15, 0.2)+
+  xlab('Ratio')+
+  ylab('number of accident')+
+  ggtitle('Ratio of Distraction by Hour')
+```
+
