@@ -6,13 +6,13 @@
 
 ## Motor_Vehicle_Collisions - Crashes
 
-```{r message=FALSE}
+```{r message=FALSE, cache=TRUE}
 library(readr)
 library(tidyr)
 library(tidyverse)
 library(extracat)
 #where I save my original data
-df=read.csv("~/Documents/STATW5702 Exploratory Data Analysis and Visualization/Final/Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
+df=read.csv("../Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
 ```
 ```{r fig.height = 15, warning=FALSE}
 df$year = substr(df$ACCIDENT.DATE, 7, 10)
