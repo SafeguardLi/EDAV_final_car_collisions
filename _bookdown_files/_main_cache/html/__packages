@@ -1,10 +1,4 @@
 base
-methods
-datasets
-utils
-grDevices
-graphics
-stats
 readr
 tidyr
 tidyverse
@@ -15,3 +9,5 @@ dplyr
 stringr
 forcats
 extracat
+ggmap
+plyr

@@ -1,4 +1,4 @@
-```{r setup, include=FALSE}
+```{r setup2, include=FALSE}
  # keep this chunk in your .Rmd file
  knitr::opts_chunk$set(warning = FALSE, message = FALSE, echo=FALSE)
 ```
@@ -11,6 +11,7 @@ library(readr)
 library(tidyr)
 library(tidyverse)
 library(extracat)
+library(plyr)
 #where I save my original data
 df=read.csv("../Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
 ```
