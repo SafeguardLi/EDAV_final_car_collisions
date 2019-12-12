@@ -2,7 +2,7 @@
 
 In this part, we create a shiny app for users to explore geographical distribution of collisions with time, location, severity and contributing factors.
 
-```{r, eval=FALSE}
+```{r, eval=FALSE,echo=FALSE}
 #Due to the large volume of data, in interactive part, we only choose 3 years data (2016-2018) and the preprocess are listed below.
 library(readr)
 library(tidyverse)
@@ -15,11 +15,8 @@ df2016_2018 = df2013_2018[which((df2013_2018$year >= 2016) & (df2013_2018$year <
 write_csv(df2016_2018,"../EDAV_final_car_collisions/Shiny/data/data2016-2018.csv")
 ```
 
+Click [Here](https://wangzhili.shinyapps.io/collisions/) to play with Shiny! 
 ```{r shiny, out.width=800}
-#rsconnect::setAccountInfo(name='wangzhili', token='B09C8D8E50307CC656D1923B26052F40', secret='20aRyensLBjkhvv6GDKO2yLnqcblxs6kYpbNqs1K')
-# library(shiny)
-# runApp("Shiny")
-Running R
-knitr::include_app("https://wangzhili.shinyapps.io/collisions/", 
-  height = "600px")
+knitr::include_app("https://wangzhili.shinyapps.io/Collision_bd/", 
+  height = "800px")
 ```

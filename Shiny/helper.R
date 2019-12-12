@@ -1,61 +1,71 @@
-# "C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/victim.csv"
-
 ## set up
+library(readr)
+library(tidyr)
 library(tidyverse)
-library(mapdeck)
-library(sf)
-Sys.setenv("plotly_username"="SafeguardLi")
-Sys.setenv("plotly_api_key"="JDJpqet5WWuBC3kDQaQc")
-key <- "pk.eyJ1IjoiZ2VvcmdlbGVlMjAxOSIsImEiOiJjazMyZTV1Z3UwajMwM21wbXFpbjdjN2E1In0.FxeN5dw--xCWmVSwMDH4BA"
+library(extracat)
+library(ggmap)
+keys = 'AIzaSyDinTb_yuI0U1VPGq6UBv1_O_Kr-PO8Kn4'
+register_google(key = keys)
 
-## read data
-data <- read.csv("C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/Motor_Vehicle_Collisions_-_Crashes.csv", header=T, na.strings=c("","NA"))
-crash <- data%>%select(COLLISION_ID, ACCIDENT.DATE, ACCIDENT.TIME, lat = LATITUDE, lon = LONGITUDE, LOCATION, NUMBER.OF.PERSONS.INJURED, NUMBER.OF.PERSONS.KILLED, CONTRIBUTING.FACTOR.VEHICLE.1, VEHICLE.TYPE.CODE.1)
-crash$ACCIDENT.DATE <- as.Date(crash$ACCIDENT.DATE, "%m/%d/%Y")
-crash$CONTRIBUTING.FACTOR.VEHICLE.1 <- tolower(crash$CONTRIBUTING.FACTOR.VEHICLE.1)
-crash$VEHICLE.TYPE.CODE.1 <- tolower(crash$VEHICLE.TYPE.CODE.1)
-crash <- crash%>%mutate(victims = NUMBER.OF.PERSONS.INJURED+NUMBER.OF.PERSONS.KILLED)
-crash <- crash[order(crash$ACCIDENT.DATE),]
+#read clean data
+df2016_2018=read.csv("data/data2016-2018.csv", header = T, na.string = c("", "NA"), sep = ",")
+# clean data
+df2016_2018rm = df2016_2018[complete.cases(df2016_2018$LATITUDE), ]
+df2016_2018rm = df2016_2018rm[as.numeric(df2016_2018rm$LONGITUDE) > -74.4, ]
+df2016_2018rm = df2016_2018rm[as.numeric(df2016_2018rm$LONGITUDE)< -73.6, ]
+df2016_2018rm = df2016_2018rm[as.numeric(df2016_2018rm$LATITUDE)< 41, ]
+df2016_2018rm = df2016_2018rm[as.numeric(df2016_2018rm$LATITUDE) > 40.4, ]
+df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1 = toupper(df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1)
 
-## subset data: total victims
-if(!file.exists("C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/total_victim.csv")){
+newyork = ggmap(get_googlemap(center = c(lon = -74.006266, lat = 40.7242551),
+                          zoom = 11, scale = 2, 
+                          maptype ='roadmap',
+                          color = 'color')) + coord_equal()
+
+brooklyn = ggmap(get_googlemap(center = c(lon = -73.949997, lat = 40.650002),
+                    zoom = 12, scale = 2, 
+                    maptype ='roadmap',
+                    color = 'color')) + coord_equal()
+
+bronx = ggmap(get_googlemap(center = c(lon = -73.865433, lat = 40.837048),
+                    zoom = 12, scale = 2, 
+                    maptype ='roadmap',
+                    color = 'color')) + coord_equal()
+
+queens = ggmap(get_googlemap(center = c(lon = -73.769417, lat = 40.742054),
+                    zoom = 12, scale = 2, 
+                    maptype ='roadmap',
+                    color = 'color')) + coord_equal()
+island = ggmap(get_googlemap(center = c(lon = -74.151535, lat = 40.579021),
+                    zoom = 12, scale = 2, 
+                    maptype ='roadmap',
+                    color = 'color')) + coord_equal()
+manhattan = ggmap(get_googlemap(center = c(lon = -73.985130, lat = 40.758896),
+                    zoom = 12, scale = 2, 
+                    maptype ='roadmap',
+                    color = 'color')) + coord_equal()
+
+df2016_2018rm_kill = mutate(df2016_2018rm, NUMBER.OF.PERSONS.KILLED = ifelse(is.na(NUMBER.OF.PERSONS.KILLED), 0,as.numeric(NUMBER.OF.PERSONS.KILLED)))
+df_pkillnozero = filter(df2016_2018rm_kill, df2016_2018rm$NUMBER.OF.PERSONS.KILLED != 0)
+
+df2016_2018rm_inju = mutate(df2016_2018rm, NUMBER.OF.PERSONS.INJURED = ifelse(is.na(NUMBER.OF.PERSONS.INJURED), 0,as.numeric(NUMBER.OF.PERSONS.INJURED)))
+df_pinnozero = filter(df2016_2018rm_inju, df2016_2018rm$NUMBER.OF.PERSONS.INJURED != 0)
+
+
+data2016 = df2016_2018rm[which(df2016_2018rm$year == 2016),]
+data2017 = df2016_2018rm[which(df2016_2018rm$year == 2017),]
+data2018 = df2016_2018rm[which(df2016_2018rm$year == 2018),]
+
+df_pinnozero2016 = df_pinnozero[which(df_pinnozero$year == 2016),]
+df_pinnozero2017 = df_pinnozero[which(df_pinnozero$year == 2017),]
+df_pinnozero2018 = df_pinnozero[which(df_pinnozero$year == 2018),]
+
+df_pkillnozero2016 = df_pkillnozero[which(df_pkillnozero$year == 2016),]
+df_pkillnozero2017 = df_pkillnozero[which(df_pkillnozero$year == 2017),]
+df_pkillnozero2018 = df_pkillnozero[which(df_pkillnozero$year == 2018),]
   
-  ## write subset of total victims data
-  t1 = Sys.time()
-  victim <- crash
-  victim <- victim[which(victim$victims != 0),]
-  victim_dist <- victim[which(victim$victims == 1),]
-  for(i in 2:max(victim$victims)){
-    temp = victim[which(victim$victims == i),]
-    if(dim(temp)[1]!=0){
-      for(j in 1:i){
-        victim_dist <- rbind(victim_dist, temp)
-        print(paste("i:",i,"_j:",j,"_",dim(victim_dist)))
-      }  
-    }
-  }
-  print(paste("Time Use:",Sys.time()-t1))
-  write_csv(victim_dist,"C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/total_victim.csv")
-  
-}
-
-## read total victim data
-victim_dist <- read_csv("C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/total_victim.csv")
-## drop lon and lat columns with NA
-victim_dist <- sf::st_as_sf(victim_dist[!is.na(victim_dist$lat),], coords = c("lon", "lat"))
-victim_dist$VEHICLE.TYPE.CODE.1 <- as.factor(victim_dist$VEHICLE.TYPE.CODE.1)
-victim_dist$CONTRIBUTING.FACTOR.VEHICLE.1 <- as.factor(victim_dist$CONTRIBUTING.FACTOR.VEHICLE.1)
-attr(victim_dist[["geometry"]], "bbox") <- c(xmin = -74.257159, ymin = 40.495992, xmax = -73.699215,ymax= 40.915568)
-## subset years
-victim_dist2013 <- victim_dist[victim_dist$ACCIDENT.DATE >= "2013-01-01" & victim_dist$ACCIDENT.DATE <= "2013-12-31",]
-victim_dist2014 <- victim_dist[victim_dist$ACCIDENT.DATE >= "2014-01-01" & victim_dist$ACCIDENT.DATE <= "2014-12-31",]
-victim_dist2015 <- victim_dist[victim_dist$ACCIDENT.DATE >= "2015-01-01" & victim_dist$ACCIDENT.DATE <= "2015-12-31",]
-victim_dist2016 <- victim_dist[victim_dist$ACCIDENT.DATE >= "2016-01-01" & victim_dist$ACCIDENT.DATE <= "2016-12-31",]
-victim_dist2017 <- victim_dist[victim_dist$ACCIDENT.DATE >= "2017-01-01" & victim_dist$ACCIDENT.DATE <= "2017-12-31",]
-victim_dist2018 <- victim_dist[victim_dist$ACCIDENT.DATE >= "2018-01-01" & victim_dist$ACCIDENT.DATE <= "2018-12-31",]
-  
-
-
-
-
-
+alco = df2016_2018rm[df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1=='ALCOHOL INVOLVEMENT',]
+back = df2016_2018rm[df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1=='BACKING UNSAFELY',]
+distr = df2016_2018rm[df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1=='DRIVER INATTENTION/DISTRACTION',]
+fail = df2016_2018rm[df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1=='FAILURE TO YIELD RIGHT-OF-WAY',]
+foll = df2016_2018rm[df2016_2018rm$CONTRIBUTING.FACTOR.VEHICLE.1=='FOLLOWING TOO CLOSELY',]

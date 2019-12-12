@@ -1,0 +1,13 @@
+name: Collision_bd
+title: Collision_bd
+username:
+account: wangzhili
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1592193
+bundleId: 2660912
+url: https://wangzhili.shinyapps.io/Collision_bd/
+when: 1576123930.33303
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data/.DS_Store
