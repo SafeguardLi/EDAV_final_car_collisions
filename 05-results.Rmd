@@ -434,7 +434,7 @@ ggpairs(new_df)
 
 
 
-## Rush Hour:
+## Rush Hour
 
 At this step, we have identified the correlation between seasonality and contribution factors of collisions. Conclusions drawn from previous analysis make us wonder whether there are times in a day, such as rush hours, that are more prone to collisions than the others.
 
@@ -523,7 +523,7 @@ Therefore, we conclude that, during rush hours, there tends to be more collision
 
 To sum up, we strongly recommend drivers to stay more vigilant during rush hours, especially on their way home.
 
-## Precipitation:
+## Precipitation
 
 At this point, we have drawn more conclusions regarding the correlation between number of collision, and distraction, by bringing more variables into the equation. However, we haven’t discussed what exactly causes distraction, the number 1 contributing factor for NYC collisions? Are tired people simply more likely to be distracted, or is there an external factor making drivers more likely to be distracted.
 
