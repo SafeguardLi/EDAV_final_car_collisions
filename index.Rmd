@@ -5,15 +5,33 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
-# Introduction
+# Before we start:
 
-## Project Objective
+## Motivation - Why do we pick this topic?
 
-The goal of this project is to identify useful advice to stay away from collisions.
+According to the Washington Post, there are about 1.7 million rear-end collisions on U.S. roads each year, and about 17,000 people die in those collisions and another 500,000 are hurt. 
 
-## Background
+New York City alone contributes roughly 200,000 collisions and 56,000 injuries each year, which is around 10 percent of the national total, making collision an issue worth tackling.
 
-According to the Washington Post, there are about 1.7 million rear-end collisions on U.S. roads each year, and about 17,000 people die in those collisions and another 500,000 are hurt. Although high-tech car manufacturers such as Volvo, BMW and Tesla are spending a huge amount of effort building collision avoidance systems, such as the emergency braking system, standard equipment in their vehicles, we believe there are simple things we can do from day to day to help us stay safer, either as drivers or as pedestrians.
+Although high-tech car manufacturers such as Volvo, BMW and Tesla are spending a huge amount of effort making collision avoidance systems every year, such as the emergency braking system, standard equipment in their vehicles, we believe that, while waiting for technical advancement of automobiles, there are simple things we can do from day to day to help us stay safer from collisions.
+
+## Objective - What is the main takeaway we want you to get out of this project?
+
+The goal of this project is to identify useful advice for all people involved in New York City traffic to better stay away from collisions.
+
+## Value - Why do we believe that using NYC collision data to answer our questions is meaningful?
+
+1. Understanding the underlying pattern behind collision data is the first step towards staying safer from collisions.
+
+- Decoding the traffic system is hard and it is very difficult for anybody to give definitive solutions or answers to traffic-related issues, such as congestion and collision. However, that doesn't mean we should stop exploring on the underlying patterns, if there are any, of collision incidents. We believe that diving in with a data science perspective might shed new light on this complex topic.
+
+2. The advice found online are too "general" and are not actionable enough for cities like NYC. 
+
+- As the third most traffic-congested city in the world, NYC faces lots of traffic issues that other cities might not face, and advice such as "don't text and drive" are far from enough for NYC. That makes it interesting and necessary to analyze NYC collision data and, therefore, finding actionable suggestions for NYC is not only beneficial to people living in NYC but also an important step towards decoding more complicated traffic systems.
+
+3. As (future) data scientists, we believe that we are obligated to provide useful and actionable insights to help people better stay away from collisions, and collision data from NYC gives us the opportunities to fulfill this obligation.
+
+- Although we are not the first groups of people who try to analyze NYC collision data, we believe that, as more data coming in each year, it is important to consistently review the trends, hopefully generating more up-to-date insights.
 
 ## Project Outline
 
@@ -22,3 +40,13 @@ In this project, we will draw and visualize the correlation between the number o
 1. During summer time, don’t follow too closely.
 2. During rush hours, especially on your way home, stay vigilant while driving.
 3. At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.
+
+## Repository Link
+
+For further information, please refer to our repositories on github:
+
+- [Data and file](https://github.com/SafeguardLi/EDAV_final_car_collisions)
+
+- [Web Page](https://github.com/EDAV-final/NYC-Collisions-Analysis)
+
+NOTE: due to the large size of collision data and weather data (precipitation data) are not uploaded to repository; also, we experienced technical difficulties with setting the webpage on the working repository, therefore we create a seperate orgnization repository for hosting webpage. 

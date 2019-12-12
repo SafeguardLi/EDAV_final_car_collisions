@@ -2,6 +2,7 @@
  # keep this chunk in your .Rmd file
  knitr::opts_chunk$set(warning = FALSE, message = FALSE,  echo=FALSE)
 ```
+
 # Results
 
 ```{r message=FALSE}
@@ -172,7 +173,7 @@ map_z11_2_g + stat_summary_hex(aes(x = LONGITUDE, y = LATITUDE, z = NUMBER.OF.PE
 ```
 
 ### Vehicle Type
-From below chart, we can see that passenger vehicle has the highest collisions count follow by sport utility/station wagon then sedan. However, as we look at the death ratio and injured ratio, bicycle and motorcycle have the highest ratio. This result tells us that when a collision happens that the bicyclist and motorcyclist have a higher chance of death and injury. Thus, a bicyclist and motorcyclist should really pay attention when riding to avoid collisions.
+From below chart, we can see that passenger vehicle has the highest collisions count follow by sport utility/station wagon then sedan.
 ```{r}
 
 #data cleaning:
@@ -206,7 +207,7 @@ ggplot(aes(x = fct_reorder(Vehicle_Type, Accidents) , y=Accidents), data=df_top1
   labs(x = "Vehicle Type", title = "2013 - 2018 Top 15 Vehicle Type for Collision")
 ```
 
-
+However, as we look at the death ratio and injured ratio, bicycle and motorcycle have the highest ratio. This result tells us that when a collision happens that the bicyclist and motorcyclist have a higher chance of death and injury. Thus, a bicyclist and motorcyclist should really pay attention when riding to avoid collisions.
 
 ```{r}
 #add death and injuried ratio to top20 data set
@@ -407,6 +408,7 @@ According to the results above, we can see that, although distraction and inatte
 Although one could argue that the causes of a large number of summer collisions are complicated and cannot simply be answered by “seasonality”, as of now, the best conclusion we can draw from this dataset is that, given a large number of summer collisions, a good way to stay safer is to NOT follow too closely.
 
 ## Correlation analysis
+
 According to online research results, the causes of a large number of summer collisions could be divided into 1. More kids are out of school; 2. High heat leads to higher equipment failure rate; 3. There tends to be more roadway construction in the summer. Although we can’t possibly make definitive conclusions regarding these three points from our dataset, we use the following correlation analysis to draw some initial findings on the correlation of heat, a unique feature of NYC summers, and collisions caused by various contributing factors.
  
 According to the results, high heat is strongly positively correlated to the number of collisions caused by distraction, following too closely and backing unsafely. Although premature, these findings could still shed new light on ways to stay safer from collisions during the summertime.

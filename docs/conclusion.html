@@ -77,10 +77,12 @@
 <li><a href="./">NYC Collisions</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
-<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#project-objective"><i class="fa fa-check"></i><b>1.1</b> Project Objective</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#background"><i class="fa fa-check"></i><b>1.2</b> Background</a></li>
-<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#project-outline"><i class="fa fa-check"></i><b>1.3</b> Project Outline</a></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Before we start:</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#motivation---why-do-we-pick-this-topic"><i class="fa fa-check"></i><b>1.1</b> Motivation - Why do we pick this topic?</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#objective---what-is-the-main-takeaway-we-want-you-to-get-out-of-this-project"><i class="fa fa-check"></i><b>1.2</b> Objective - What is the main takeaway we want you to get out of this project?</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#value---why-do-we-believe-that-using-nyc-collision-data-to-answer-our-questions-is-meaningful"><i class="fa fa-check"></i><b>1.3</b> Value - Why do we believe that using NYC collision data to answer our questions is meaningful?</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#project-outline"><i class="fa fa-check"></i><b>1.4</b> Project Outline</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#repository-link"><i class="fa fa-check"></i><b>1.5</b> Repository Link</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a><ul>
 <li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#motor-vehicle-collisions---crashes"><i class="fa fa-check"></i><b>2.1</b> Motor Vehicle Collisions - Crashes</a></li>
@@ -114,9 +116,9 @@
 </ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a><ul>
-<li class="chapter" data-level="7.1" data-path="conclusion.html"><a href="conclusion.html#limitation-of-this-analysis"><i class="fa fa-check"></i><b>7.1</b> Limitation of this analysis:</a></li>
-<li class="chapter" data-level="7.2" data-path="conclusion.html"><a href="conclusion.html#future-directions"><i class="fa fa-check"></i><b>7.2</b> Future directions:</a></li>
-<li class="chapter" data-level="7.3" data-path="conclusion.html"><a href="conclusion.html#lesson-learned"><i class="fa fa-check"></i><b>7.3</b> Lesson learned:</a></li>
+<li class="chapter" data-level="7.1" data-path="conclusion.html"><a href="conclusion.html#limitation-of-this-analysis"><i class="fa fa-check"></i><b>7.1</b> Limitation of this analysis</a></li>
+<li class="chapter" data-level="7.2" data-path="conclusion.html"><a href="conclusion.html#future-directions"><i class="fa fa-check"></i><b>7.2</b> Future directions</a></li>
+<li class="chapter" data-level="7.3" data-path="conclusion.html"><a href="conclusion.html#lesson-learned"><i class="fa fa-check"></i><b>7.3</b> Lesson learned</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -139,26 +141,33 @@
             <section class="normal" id="section-">
 <div id="conclusion" class="section level1">
 <h1><span class="header-section-number">Chapter 7</span> Conclusion</h1>
-<p>In summary, we believe that people can better stay away from collisions in NYC by following the three advice below:</p>
-<ol style="list-style-type: decimal">
-<li>During summer time, don’t follow too closely.</li>
-<li>During rush hours, especially on your way home, stay vigilant while driving.</li>
-<li>At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.</li>
-</ol>
+<p>According to the results of our analysis, we derive three actionable insights that can help people better stay away from collisions in NYC:</p>
+<ul>
+<li><p>During summer time, don’t follow too closely while driving.</p></li>
+<li><p>During rush hours, especially on your way home, stay more vigilant while driving.</p></li>
+<li><p>No evidence has been found to prove the correlation between precipitation and collision caused by distraction. So don’t blame bad weather.</p></li>
+</ul>
 <div id="limitation-of-this-analysis" class="section level2">
-<h2><span class="header-section-number">7.1</span> Limitation of this analysis:</h2>
-<p>Due to high volume of missing location variable, especially borough and zip code, we are restrained from doing cross-borough analysis. Instead, we could only use map plots to give general insights of the data. However, while map plots can do a better job identifying spatial clusters, it carries less values in cross variables analysis.</p>
-<p>Second, since traffic is a very complicated topic, without further support from more reliable and granular data sources, some of the conclusions are valid only under the context of the datasets we use. For example, when we say precipitation is not a contributing factor to distraction, we don’t know what is a contributing factor to distraction, until further data comes in.</p>
+<h2><span class="header-section-number">7.1</span> Limitation of this analysis</h2>
+<p>There are two types of limitations of our analysis:</p>
+<p>Technical limitation: Due to high volume of missing location variable, especially borough, we are restrained from doing cross-borough analysis, such as locating the most collision-prone borough. Instead, we use map plots to show more detailed spread of collision over the entire NYC. However, while map plots can do a better job identifying spatial clusters, it carries less values in cross variables analysis.</p>
+<p>Analytical limitation: Since traffic is a very complicated system, thus a complicated topic indeed, without further support from more reliable and granular data sources, which are usually not open to public, some of the conclusions are valid only under the context of the datasets we use. For example, when we say precipitation is not a contributing factor to distraction, what we really mean is that precipitation level is not correlated to the number of collisions in our datasets. Until further data comes in, we don’t have enough resources to further decode what constitutes of collision.</p>
 </div>
 <div id="future-directions" class="section level2">
-<h2><span class="header-section-number">7.2</span> Future directions:</h2>
-<p>First, we could utilize paid serviced such as Google Map API to recover the missing location variables, making the entire analysis more exhaustive. Second, we could combine our analysis with more diverse data sources, trying to disclose more potential influencers of traffic collisions in NYC. Third, we could make this type of analysis a regular task onwards. Because more data usually means more space for more advanced conclusions.</p>
+<h2><span class="header-section-number">7.2</span> Future directions</h2>
+<ul>
+<li><p>First, we could utilize paid services such as Google Map API to recover the missing location variables, making the entire analysis more exhaustive.</p></li>
+<li><p>Second, we could combine our analysis with more diverse data sources, trying to disclose more potential influencers of traffic collisions in NYC.</p></li>
+<li><p>Third, we could make this type of analysis a regular task onwards. Because more data usually means more space for more advanced conclusions.</p></li>
+</ul>
 </div>
 <div id="lesson-learned" class="section level2">
-<h2><span class="header-section-number">7.3</span> Lesson learned:</h2>
-<p>First, pre-project brainstorming is crucial for the success of the project.
-Second, it is more efficient to keep all the data preparation in one place.
-Third, a reasonable split of tasks between the teammates usually lead to more efficient work flow and better results.</p>
+<h2><span class="header-section-number">7.3</span> Lesson learned</h2>
+<ul>
+<li><p>Pre-project brainstorming is crucial for the success of the project because starting off on a right direction under a right analytical structure definitely saves a lot of time from correcting ourselves and editing on meaningless insights.</p></li>
+<li><p>Keeping all the data preparation in one space makes the entire work flow more efficient. Since, the datasets we use contain lots of un-labeled missing values, duplicated factor and distracting variables, it is exceptionally crucial for us to make our datasets analysis-ready before the actual work begins. Keeping all the data preparation not only allows us to save time from doing duplicated data cleaning, but also makes sure the way we prepare our data is consistent.</p></li>
+<li><p>By comparing different packages with different features helps us to understand the pros and cons of each one of them and find the most suitable one for our goal and data. For example, when exploring the ways to represent spatial data of collision, we try several different approaches. First, we try to use the “choroplethrZip” package to create a zip code choropleth, but we realize the data has many missing zip codes and contain couple zip codes that were not include in the package. Then we turn to ggmap along with ggplot2, which allows us to produce hexagon heatmaps over Google maps. We also explore several options to make an interactive map, such as leaflet, mapdeck, and plot_ly. Yet, they have limitations and often required additional data requirements to achieve the result we want. Finally, we found that using shiny along with ggmap plus ggplot2 can easily provide us interactive map with value-colored hexagon heatmaps.</p></li>
+</ul>
 
 </div>
 </div>
