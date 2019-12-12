@@ -1,19 +1,25 @@
 # Interactive component
 
+In this part, we create a shiny app for users to explore geographical distribution of collisions with time, location, severity and contributing factors.
+
+```{r, eval=FALSE}
+#Due to the large volume of data, in interactive part, we only choose 3 years data (2016-2018) and the preprocess are listed below.
+library(readr)
+library(tidyverse)
+df = read.csv("/Users/apple/Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
+df <- df%>%select(ACCIDENT.DATE, LATITUDE, LONGITUDE, NUMBER.OF.PERSONS.INJURED, NUMBER.OF.PERSONS.KILLED, CONTRIBUTING.FACTOR.VEHICLE.1, VEHICLE.TYPE.CODE.1)
+df$year = substr(df$ACCIDENT.DATE, 7, 10)
+df$year = as.numeric(df$year)
+df2013_2018 = df[((df$year >2012) & (df$year <2019)),]
+df2016_2018 = df2013_2018[which((df2013_2018$year >= 2016) & (df2013_2018$year <= 2018)),]
+write_csv(df2016_2018,"../EDAV_final_car_collisions/Shiny/data/data2016-2018.csv")
+```
+
 ```{r shiny, out.width=800}
 #rsconnect::setAccountInfo(name='wangzhili', token='B09C8D8E50307CC656D1923B26052F40', secret='20aRyensLBjkhvv6GDKO2yLnqcblxs6kYpbNqs1K')
 # library(shiny)
 # runApp("Shiny")
-
-# Clean data part
-#library(tidyverse)
-#data <- read.csv("C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/Motor_Vehicle_Collisions_-_Crashes.csv", #header=T, na.strings=c("","NA"))
-#df <- data%>%select(ACCIDENT.DATE, LATITUDE, LONGITUDE, NUMBER.OF.PERSONS.INJURED, NUMBER.OF.PERSONS.KILLED, CONTRIBUTING.FACTOR.VEHICLE.1, VEHICLE.TYPE.CODE.1)
-#df$year = substr(df$ACCIDENT.DATE, 7, 10)
-#df = df[(df$year >"2012" & df$year <"2019"),]
-#write_csv(df,"C:/Users/54236/OneDrive/Documents/EDAV_final_car_collisions/Shiny/data/data.csv")
-
-# Running R
-knitr::include_app(" https://wangzhili.shinyapps.io/wordcloud/", 
+Running R
+knitr::include_app("https://wangzhili.shinyapps.io/collisions/", 
   height = "600px")
 ```
