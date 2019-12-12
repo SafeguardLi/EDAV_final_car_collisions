@@ -1,1 +1,17 @@
 # Data transformation
+
+We mainly focus on the following aspects of transforming the raw data into forms that we could work with in R:
+
+## Dataset combining:
+Making pivot tables provides a solution to work with datasets of different granularity. 
+For example, when working with daily collision data with monthly weather data, we first use group_by() to group the daily collision data into monthly data and then combine grouped collision data with weather data for further analysis and visualization.
+
+## Sanity check on location data:
+Due to potential technical failures, some location data, recorded in longitude and latitude, locate outside of New York City and get removed from the dataset.
+
+Feature engineering
+
+Due to potential recording failures, some features contain obviously duplicate factors. For example, the “vehicle type” feature erroneously splits the factor “taxi” into two separate factors “Taxi” and “TAXI” and we manually combine these two factors into one single factor, for the purpose of analysis.
+
+## Dataframe subsetting
+While performing some analysis work, we tend to work with small subsets instead of the entire dataset, in order to be clean and fast.

@@ -1,9 +1,24 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "NYC Motor Vehicle Collisions"
+author: "Mike Yao-Yi Wang.  Qiang Zhao, Wangzhi Li, and Weixi Yao"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
 # Introduction
 
+## Project Objective
+
+The goal of this project is to identify useful advice to stay away from collisions.
+
+## Background
+
+According to the Washington Post, there are about 1.7 million rear-end collisions on U.S. roads each year, and about 17,000 people die in those collisions and another 500,000 are hurt. Although high-tech car manufacturers such as Volvo, BMW and Tesla are spending a huge amount of effort building collision avoidance systems, such as the emergency braking system, standard equipment in their vehicles, we believe there are simple things we can do from day to day to help us stay safer, either as drivers or as pedestrians.
+
+## Project Outline
+
+In this project, we will draw and visualize the correlation between the number of collisions, the severity of collisions, and features such as seasonality, regionality, and human factors. From the correlation drawn, we then formulate the following three advice that people can easily follow and fundamentally helpful in avoiding collisions:
+
+1. During summer time, don’t follow too closely.
+2. During rush hours, especially on your way home, stay vigilant while driving.
+3. At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.

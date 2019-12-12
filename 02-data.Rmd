@@ -1,2 +1,21 @@
 # Data sources
 
+We use the follwoing data sources.
+
+## Motor Vehicle Collisions - Crashes
+
+The Motor Vehicle Collisions - Crashes is collected from the NYC OpenData website. The data contains all police reported motor vehicle collisions in NYC since July 2012. Each row represents a crash event with 29 columns that describe the crash, including date, time, location, vehicle type, number of people injured, number of people killed, and contributing factors. For this project, we would only consider 2013 and 2018 data as we want to analyze the collision data that has a complete year cycle.
+
+data url: https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95
+
+
+## Temperature Data:
+The website shows the average monthly and annual temperautre (F/Fahrenheit) at Central Park. We pick out the value in 2017-18 and save them in a new cvs file, which each row contains `date` and `temperature` value.Based on this data, we plan to find a correlation between temperature and number of collision by month. Although data only contains the temperature value at Central Park, it is representive, since the New York City temperature does not vary by a lot.
+
+data url: https://www.weather.gov/media/okx/Climate/CentralPark/monthlyannualtemp.pdf
+
+
+## Precipitation Data:
+The website is a weather data base and have historic weather data since 1942. We collect weather data at JFK and are only interested in the `daily precipitation` value between 2013-2018. Later, we try to find a correlation between precipitation and collision of specific reason.
+ 
+Data url: https://www.ncdc.noaa.gov/cdo-web/datatools/lcd
