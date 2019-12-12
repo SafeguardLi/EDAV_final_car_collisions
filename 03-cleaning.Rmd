@@ -8,13 +8,10 @@ For example, when working with daily collision data with monthly weather data, w
 
 ## Sanity check on location data:
 Due to potential technical failures, some location data, recorded in longitude and latitude, locate outside of New York City and get removed from the dataset.
+
 Feature engineering
 
 Due to potential recording failures, some features contain obviously duplicate factors. For example, the “vehicle type” feature erroneously splits the factor “taxi” into two separate factors “Taxi” and “TAXI” and we manually combine these two factors into one single factor, for the purpose of analysis.
 
 ## Dataframe subsetting
 While performing some analysis work, we tend to work with small subsets instead of the entire dataset, in order to be clean and fast.
-
-## Missing value cleaning
-Since detailed patterns we discover in missing values will be discussed in the next chapter, we are only discussing example of the ways we handle these missing values in transforming data.
-Most missing values happen in location and weather data. In working with missing location and weather data, we mainly follow the proximity rule. For example, if a particular month is missing the snowfall data, we fill it using the average snowfall of one month before and one month after such month.

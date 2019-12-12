@@ -19,6 +19,6 @@ According to the Washington Post, there are about 1.7 million rear-end collision
 
 In this project, we will draw and visualize the correlation between the number of collisions, the severity of collisions, and features such as seasonality, regionality, and human factors. From the correlation drawn, we then formulate the following three advice that people can easily follow and fundamentally helpful in avoiding collisions:
 
-    a. XXXX
-    b. XXXX
-    c. XXXX
+1. During summer time, don’t follow too closely.
+2. During rush hours, especially on your way home, stay vigilant while driving.
+3. At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.
