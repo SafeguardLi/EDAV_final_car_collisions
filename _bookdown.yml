@@ -1,3 +1,4 @@
+book_filename: "NYCcollisions"
 output_dir: docs
 delete_merged_file: true
 edit: https://github.com/SafeguardLi/EDAV_final_car_collisions/edit/master/%s
