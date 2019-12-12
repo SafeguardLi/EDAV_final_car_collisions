@@ -1,30 +1,31 @@
 ```{r setup, include=FALSE}
  # keep this chunk in your .Rmd file
- knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+ knitr::opts_chunk$set(warning = FALSE, message = FALSE,  echo=FALSE)
 ```
 # Results
 
 ```{r message=FALSE}
 library(lubridate)
 library(ggplot2)
-#library(dplyr)
 library(ggrepel)
-#library(tidyverse)
+library(GGally)
 library(ggmap)
 library(dplyr)
 library(lubridate)
-library(chron)
-```
-```{r message=FALSE}
 library(readr)
 library(tidyr)
 library(tidyverse)
 library(extracat)
-#where I save my original data
+library(lubridate)
+library(chron)
+#read in collision data
 df=read.csv("../Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
 ```
 
-```{r fig.height = 15, warning=FALSE}
+## Geographical Insights
+We will first show couple hexagon heatmaps of New York City Collisions between 2013/01/01 to 2018/12/31. Note we choose this time frame because we want to capture the entire year data to avoid possible seasonal impact.  
+```{r}
+#get data with year between 2013 and 2018
 df$year = substr(df$ACCIDENT.DATE, 7, 10)
 df2013_2018 = df[(df$year > "2012" & df$year < "2019"),]
 df2013_2018 = df2013_2018 %>%
@@ -53,11 +54,6 @@ df_year_summary = df2013_2018%>%group_by(df2013_2018$year)%>%summarise(total.cou
 
 
 ```{r}
-#number of collision per year
-table(df2013_2018$year)
-```
-
-```{r}
 #only keep the data with long and latitude not equal to NA and within New York City's range
 df2013_2018rm = df2013_2018[complete.cases(df2013_2018$LATITUDE), ]
 df2013_2018rm = df2013_2018rm[as.numeric(df2013_2018rm$LONGITUDE) > -74.4, ]
@@ -68,52 +64,20 @@ df2013_2018rm = df2013_2018rm[as.numeric(df2013_2018rm$LATITUDE) > 40.4, ]
 
 
 
-```{r}
-#get google map's of New York City
-#graph that covers all New York City region
-y <- ggmap(get_googlemap(center = c(lon = -74.0097535, lat = 40.6969571),
-                    zoom = 10, scale = 2,
-                    maptype ='roadmap',
-                    color = 'color'))
-```
 
 ```{r}
-#zoom in graph
+#New York map
 map_z11_2 <- ggmap(get_googlemap(center = c(lon = -74.006266, lat = 40.7242551),
                     zoom = 11, scale = 2,
                     maptype ='roadmap',
                     color = 'color'))
 
 ```
-
+### Number of Collisions
+We can see that from the below hexagon heatmap, the majority of the collisions happened at Midtown region. This is expected as Midtown area tend to have the highest traffic volume.
 ```{r}
-#need to change the coordinate in order to add hexagon heatmap
-y_g = y +coord_equal()
+#hexagon heatmap for New York Collisions
 map_z11_2_g = map_z11_2 +coord_equal()
-```
-
-```{r}
-#hexagon heatmap for collision
-y_g + geom_hex(aes(x = LONGITUDE, y = LATITUDE,
-                 fill = cut(..count.., c(0, 750, 1500, 2250, 3000,
-                                         3750, 4500, 5250, 6000, Inf))), 
-             colour = NA,
-             data = df2013_2018rm, 
-             alpha = 0.75, 
-             bins = 90)+
-    scale_fill_brewer(palette = "OrRd",
-                      labels = c("<750", "750-1500", "1500-2250",
-                                 "2250-3000", "3000-3750",
-                                 "3750-4500", "4500-5250",
-                                 "5250-6000", ">6000")) +
-  theme(legend.title=element_blank())+
-  ggtitle("2013-2018 collision count-All points in NYC")
-
-```
-
-
-```{r}
-#hexagon heatmap for collision zoom in version
 map_z11_2_g + geom_hex(aes(x = LONGITUDE, y = LATITUDE,
                  fill = cut(..count.., c(0, 750, 1500, 2250, 3000,
                                          3750, 4500, 5250, 6000, Inf))), 
@@ -127,10 +91,40 @@ map_z11_2_g + geom_hex(aes(x = LONGITUDE, y = LATITUDE,
                                  "3750-4500", "4500-5250",
                                  "5250-6000", ">6000")) +
   theme(legend.title=element_blank())+
-  ggtitle("2013-2018 collision count")
+  ggtitle("Number of Collisions between 2013 to 2018")
 
 ```
 
+Then we want to see whether the above pattern remains if we take in the account of seasonal factor. In other words, does Midtown always has the highest number of collisions throughout the year? Thus, we assign season value for each collision based on its date and replot the hexagon heatmap facet by season (Winter: December to February, Spring:  March to May, Summer: June to August, Fall: September to November). Yet, as we can see from below result, the pattern is the same among all the seasons, which Midtown has the highest collision count. However, we can observe that Summer has the overall highest collision count among all seasons.
+```{r}
+#graph by season
+#add month
+df2013_2018rm$month = substr(df2013_2018rm$ACCIDENT.DATE, 1, 2)
+#add season
+df2013_2018rm = mutate(df2013_2018rm, season = ifelse(month == "12"| month =="01"|month =="11", "Winter", ifelse(month =="02"|month=="03"|month=="04", "Spring", ifelse(month =="05"|month =="06"|month == "07", "Summer", "Fall"))))
+#reorder season for plot.
+df2013_2018rm$season_order =  factor(df2013_2018rm$season, levels = c("Winter", "Spring", "Summer", "Fall"))
+map_z11_2_g+ geom_hex(aes(x = LONGITUDE, y = LATITUDE,
+                 fill = cut(..count.., c(0, 500, 1000, 1500, 2000,
+                                         2500, 3000, 3500, 4000, Inf))), 
+             colour = NA,
+             data = df2013_2018rm, 
+             alpha = 0.75, 
+             binwidths = c(0.01,0.01))+
+    scale_fill_brewer(palette = "OrRd",
+                      labels = c("<500", "500-1000", "1000-1500",
+                                 "1500-2000", "2000-2500",
+                                 "2500-3000", "3000-3500",
+                                 "3500-4000", ">4000")) +
+  facet_wrap(~season_order)+
+  theme(legend.title=element_blank())+
+  ggtitle("Number of Collisions by season")
+
+```
+
+### Number of Deaths and Injuries
+
+Now Let's look at the hexagon heatmap over the number of deaths from collisions. We can see that there is no clear cluster of death in geographical basis. 
 ```{r}
 #number of person killed
 df2013_2018rm= mutate(df2013_2018rm, NUMBER.OF.PERSONS.KILLED = ifelse(is.na(NUMBER.OF.PERSONS.KILLED), 0,as.numeric(NUMBER.OF.PERSONS.KILLED)))
@@ -149,9 +143,10 @@ map_z11_2_g + stat_summary_hex(aes(x = LONGITUDE, y = LATITUDE, z = NUMBER.OF.PE
                                  "6-8", "8-10",
                                  ">10")) +
   theme(legend.title=element_blank())+
-  ggtitle("2013-2018 number of person killed")
+  ggtitle("Number of Person Killed in Collision between 2013 to 2018")
 ```
 
+Let's also look at the hexagon heatmap over the number of injuries from collisions. We can see that there are three major clusters that have high number of injuries. The clusters are around at Midtown, West Bronx, and Crown Heights.
 
 
 ```{r}
@@ -173,36 +168,11 @@ map_z11_2_g + stat_summary_hex(aes(x = LONGITUDE, y = LATITUDE, z = NUMBER.OF.PE
                                  "500-600", "600-700",
                                  "700-800", ">800")) +
   theme(legend.title=element_blank())+
-  ggtitle("2013-2018 number of person injuries")
+  ggtitle("Number of Person Injuried in Collisions between 2013 to 2018")
 ```
 
-```{r}
-#graph by season
-#add month
-df2013_2018rm$month = substr(df2013_2018rm$ACCIDENT.DATE, 1, 2)
-#add season
-df2013_2018rm = mutate(df2013_2018rm, season = ifelse(month == "12"| month =="01"|month =="11", "Winter", ifelse(month =="02"|month=="03"|month=="04", "Spring", ifelse(month =="05"|month =="06"|month == "07", "Summer", "Fall"))))
-#reorder season for plot.
-df2013_2018rm$season_order =  factor(df2013_2018rm$season, levels = c("Winter", "Spring", "Summer", "Fall"))
-map_z11_2_g+ geom_hex(aes(x = LONGITUDE, y = LATITUDE,
-                 fill = cut(..count.., c(0, 500, 1000, 1500, 3000,
-                                         3500, 4000, 4500, 5000, Inf))), 
-             colour = NA,
-             data = df2013_2018rm, 
-             alpha = 0.75, 
-             bins = 30)+
-    scale_fill_brewer(palette = "OrRd",
-                      labels = c("<500", "500-1000", "1000-1500",
-                                 "1500-2000", "2000-2500",
-                                 "2500-3000", "3000-3500",
-                                 "3500-4000", ">4000")) +
-  facet_wrap(~season_order)+
-  theme(legend.title=element_blank())+
-  ggtitle("2013-2018 collision count by season")
-
-```
-
-
+### Vehicle Type
+From below chart, we can see that passenger vehicle has the highest collisions count follow by sport utility/station wagon then sedan. However, as we look at the death ratio and injured ratio, bicycle and motorcycle have the highest ratio. This result tells us that when a collision happens that the bicyclist and motorcyclist have a higher chance of death and injury. Thus, a bicyclist and motorcyclist should really pay attention when riding to avoid collisions.
 ```{r}
 
 #data cleaning:
@@ -233,7 +203,7 @@ df_top15 = df_vehical2_adj[c(1:15),]
 ggplot(aes(x = fct_reorder(Vehicle_Type, Accidents) , y=Accidents), data=df_top15) +
   geom_bar(stat="identity")+ 
   coord_flip()+
-  labs(x = "Vehicle Type", title = "2013 - 2018 top 15 Vehical Type for Collision")
+  labs(x = "Vehicle Type", title = "2013 - 2018 Top 15 Vehicle Type for Collision")
 ```
 
 
@@ -250,16 +220,19 @@ df_top15kill = df_top15[order(df_top15$Killed_ratio, decreasing = TRUE), ]
 ggplot(aes(x = fct_reorder(Vehicle_Type, Inj_ratio) , y=Inj_ratio), data=df_top15inj) +
   geom_bar(stat="identity")+ 
   coord_flip()+
-  labs(x = "Vehicle Type", title = "Injured Ratio for 2017 - 2018 top 15 Vehical Type")
+  labs(x = "Vehicle Type", title = "Injured Ratio for Top 15 Vehicle Type")
 
 #graph top20 death ratio
 ggplot(aes(x = fct_reorder(Vehicle_Type, Killed_ratio) , y=Killed_ratio), data=df_top15kill) +
   geom_bar(stat="identity")+ 
   coord_flip()+
-  labs(x = "Vehicle Type", title = "Death Ratio for 2017 - 2018 top 15 Vehical Type")
+  labs(x = "Vehicle Type", title = "Death Ratio for Top 15 Vehicle Type")
 
 ```
 
+## Number of Collisions per Day
+
+We start by having a quick look at the number of daily collisions in NYC every year from 2013 to 2018. From the time series plot above, we initially conclude that although the number of daily collisions consistently fluctuates, the average number of daily collisions is visually consistent, while gradually increasing year by year.
 
 ```{r}
 library(dygraphs)
@@ -276,12 +249,14 @@ df_date=df_date%>%
 interactive_date=xts(x=df_date$value,order.by=df_date$MDY)
 ```
 ```{r}
-dygraph(interactive_date,main='Number of accident in 2013-18',xlab = 'Date',
-  ylab='Number of accident')%>% 
-  dySeries("V1", label = "Accident number")%>%
+dygraph(interactive_date,main='Number of Collisions per Day',xlab = 'Date',
+  ylab='Number of Collisions')%>% 
+  dySeries("V1", label = "Collision Count")%>%
   dyRangeSelector()
 ```
-Cannot see the pattern.Therefore, we combine the value in every month. 
+
+## Number of Collisions per Month
+To further decode the underlying pattern of collisions in NYC, we down-sampled the dataset by grouping daily data into monthly data. The graph prematurely confirms our initial conclusions from the previous plot by showing a consistent growth of collisions each year, while maintaining the seasonal pattern, such as peaks during the summers and drops during the winters. The pattern is so uniform that we have decided to take one more step to have a clearer year-by-year comparison.
 
 ```{r}
 df_date_month=df2013_2018%>%
@@ -300,11 +275,17 @@ df_date_month=df_date_month%>%
 interactive_date_month=xts(x=df_date_month$value,order.by=df_date_month$MDY)
 ```
 ```{r}
-dygraph(interactive_date_month,main='Number of accident in 2013-18 by Month',xlab = 'Date',
-  ylab='Number of accident By month')%>% 
-  dySeries("V1", label = "Accident number")%>%
+dygraph(interactive_date_month,main='Number of Collisions per Month',xlab = 'Date',
+  ylab='Number of Collisions')%>% 
+  dySeries("V1", label = "Collision Count")%>%
   dyRangeSelector()
 ```
+
+## Number of Collisions per Month by Year
+
+The resulted graph further confirms our hypothesis that although the number of collisions consistently increases every year, the uniform seasonal pattern behind the number of collisions in NYC not only gets preserved but also gets strengthened year by year, proving that there is a correlation between seasons and number of collisions.
+
+
 ```{r}
 df_date_month_ggplot=df_date_month
 df_date_month_ggplot$year=substr(df_date_month_ggplot$MDY,0,4)
@@ -316,12 +297,16 @@ ggplot(data=df_date_month_ggplot,aes(x=MDY,y=value,color=year))+
   geom_line()+
   scale_x_date(date_labels = "%b")+
   guides(color = guide_legend(reverse = TRUE))+
-  xlab('month')+
-  ylab('number of accident')+
-  ggtitle('Number of Accident by Month in different Year')
+  xlab('Month')+
+  ylab('Number of Collisions')+
+  ggtitle('Number of Collisions per Month by Year')
 ```
 
-Bar Chart of contribution factor
+## Bar Chart of contribution factor
+
+To provide useful advice for people to stay safer during summer times, we start tackling the high volume of summer collisions by examining the top 15 contribution factors first.
+
+
 ```{r}
 temp=df2013_2018
 temp$CONT.FACTOR.VEHICLE.1= toupper(temp$CONT.FACTOR.VEHICLE.1)
@@ -331,16 +316,21 @@ temp = temp %>%group_by(temp$CONT.FACTOR.VEHICLE.1)%>%summarise(total.count = n(
 temp = temp[order(temp$total.count, decreasing = TRUE), ]
 #remove na vehical type
 temp= filter(temp, temp$`temp$CONT.FACTOR.VEHICLE.1` != "UNSPECIFIED")
-FACTOR20 = temp[c(1:20),]
+FACTOR15 = temp[c(1:15),]
 ```
 ```{r}
-ggplot(data=FACTOR20,aes(x=fct_reorder(`temp$CONT.FACTOR.VEHICLE.1`,`total.count`),y=`total.count`))+geom_bar(stat="identity")+xlab('Contribution Factor')+ylab('Number of Accident')+
-  ggtitle('Number of Accident by Different Contribution Factor')+
+ggplot(data=FACTOR15,aes(x=fct_reorder(`temp$CONT.FACTOR.VEHICLE.1`,`total.count`),y=`total.count`))+geom_bar(stat="identity")+xlab('Contribution Factor')+ylab('Number of Collsions')+
+  ggtitle('Top 15 Contribution Factors')+
   coord_flip()
 ```
-Analysis top 5 contributin factor
-DRIVER INATTENTION/DISTRACTION
+
+According to the horizontal bar chart above, driver inattention/distraction is the dominant number 1 contribution factor of collisions. This result prematurely echoes with the complexity and NYC traffic system, where one second of distraction or inattention could cause severe consequences.
+
+
 ```{r}
+#Analysis top 5 contributin factor
+#DRIVER INATTENTION/DISTRACTION
+
 df2013_2018$CONT.FACTOR.VEHICLE.1= toupper(df2013_2018$CONT.FACTOR.VEHICLE.1)
 inattention=df2013_2018
 inattention=filter(inattention,inattention$CONT.FACTOR.VEHICLE.1=='DRIVER INATTENTION/DISTRACTION')
@@ -351,8 +341,9 @@ inattention$ACCIDENT.DATE=as.Date(inattention$ACCIDENT.DATE,'%m-%d')
 inattention=inattention%>%mutate(reason='DRIVER INATTENTION/DISTRACTION')
 inattention$scalecount=100*inattention$`total.count`/inattention$`total.count`[1]
 ```
-FAILURE TO YIELD RIGHT-OF-WAY
+
 ```{r}
+#FAILURE TO YIELD RIGHT-OF-WAY
 factor2=df2013_2018
 factor2=filter(factor2,factor2$CONT.FACTOR.VEHICLE.1=='FAILURE TO YIELD RIGHT-OF-WAY')
 factor2$ACCIDENT.DATE=substr(factor2$ACCIDENT.DATE,0,2)
@@ -362,8 +353,9 @@ factor2$ACCIDENT.DATE=as.Date(factor2$ACCIDENT.DATE,'%m-%d')
 factor2=factor2%>%mutate(reason='FAILURE TO YIELD RIGHT-OF-WAY')
 factor2$scalecount=100*factor2$`total.count`/factor2$`total.count`[1]
 ```
-FOLLOWING TOO CLOSELY
+
 ```{r}
+#FOLLOWING TOO CLOSELY
 factor3=df2013_2018
 factor3=filter(factor3,factor3$CONT.FACTOR.VEHICLE.1=='FOLLOWING TOO CLOSELY')
 factor3$ACCIDENT.DATE=substr(factor3$ACCIDENT.DATE,0,2)
@@ -373,8 +365,9 @@ factor3$ACCIDENT.DATE=as.Date(factor3$ACCIDENT.DATE,'%m-%d')
 factor3=factor3%>%mutate(reason='FOLLOWING TOO CLOSELY')
 factor3$scalecount=100*factor3$`total.count`/factor3$`total.count`[1]
 ```
-BACKING UNSAFELY
+
 ```{r}
+#BACKING UNSAFELY
 factor4=df2013_2018
 factor4=filter(factor4,factor4$CONT.FACTOR.VEHICLE.1=='BACKING UNSAFELY')
 factor4$ACCIDENT.DATE=substr(factor4$ACCIDENT.DATE,0,2)
@@ -384,8 +377,9 @@ factor4$ACCIDENT.DATE=as.Date(factor4$ACCIDENT.DATE,'%m-%d')
 factor4=factor4%>%mutate(reason='BACKING UNSAFELY')
 factor4$scalecount=100*factor4$`total.count`/factor4$`total.count`[1]
 ```
-OTHER VEHICULAR
+
 ```{r}
+#OTHER VEHICULAR
 factor5=df2013_2018
 factor5=filter(factor5,factor5$CONT.FACTOR.VEHICLE.1=='OTHER VEHICULAR')
 factor5$ACCIDENT.DATE=substr(factor5$ACCIDENT.DATE,0,2)
@@ -397,14 +391,26 @@ factor5$scalecount=100*factor5$`total.count`/factor5$`total.count`[1]
 ```
 ```{r}
 top_5_factor=rbind(inattention,factor2,factor3,factor4,factor5)
-top_5_factor$reason <- factor(top_5_factor$reason , levels = c("FOLLOWING TOO CLOSELY", "DRIVER INATTENTION/DISTRACTION", "BACKING UNSAFELY","OTHER VEHICULAR","FAILURE TO YIELD RIGHT-OF-WAY"))
+top_5_factor$Reason <- factor(top_5_factor$reason , levels = c("FOLLOWING TOO CLOSELY", "DRIVER INATTENTION/DISTRACTION", "BACKING UNSAFELY","OTHER VEHICULAR","FAILURE TO YIELD RIGHT-OF-WAY"))
 ```
 ```{r}
 ggplot(data=top_5_factor,aes(x=`ACCIDENT.DATE`,y=scalecount,color=reason))+geom_line()+  scale_x_date(date_labels = "%b")+
-  xlab('month')+
-  ylab('number of accident')+
-  ggtitle('Time Series of Top 5 Contribution Factor')
+  xlab('Month')+
+  ylab('Number of Collsions')+
+  ggtitle('Time Series of Top 5 Contribution Factors')
 ```
+
+To further decode the potential relationship between contribution factors and seasonality, we create the above time series, where each line represents the percentage of change during different times of the year.
+
+According to the results above, we can see that, although distraction and inattention are the number 1 contributing factor for collisions in general, the number of collisions caused by following too closely significantly increases during summer times, while the others stay approximately the same.
+
+Although one could argue that the causes of a large number of summer collisions are complicated and cannot simply be answered by “seasonality”, as of now, the best conclusion we can draw from this dataset is that, given a large number of summer collisions, a good way to stay safer is to NOT follow too closely.
+
+## Correlation analysis
+According to online research results, the causes of a large number of summer collisions could be divided into 1. More kids are out of school; 2. High heat leads to higher equipment failure rate; 3. There tends to be more roadway construction in the summer. Although we can’t possibly make definitive conclusions regarding these three points from our dataset, we use the following correlation analysis to draw some initial findings on the correlation of heat, a unique feature of NYC summers, and collisions caused by various contributing factors.
+ 
+According to the results, high heat is strongly positively correlated to the number of collisions caused by distraction, following too closely and backing unsafely. Although premature, these findings could still shed new light on ways to stay safer from collisions during the summertime.
+
 ```{r}
 df_temperature=read.csv('temperature1.csv')
 ```
@@ -416,11 +422,11 @@ df_temperature1=df_temperature1%>%group_by(df_temperature1$month)%>%summarise( s
 df_temperature1$`sum(Temp)`=df_temperature1$`sum(Temp)`/6
 ```
 correlation analysis
-```{r}
+```{r fig.width = 10, fig.height =10}
 library("PerformanceAnalytics")
-new_df=cbind(df_temperature1$`sum(Temp)`,inattention$`total.count`,factor2$total.count,factor3$total.count,factor4$total.count,factor5$total.count)
-colnames(new_df)=c('temperature','inattention','FAILURE TO YIELD RIGHT-OF-WAY','FOLLOWING TOO CLOSELY','BACKING UNSAFELY','OTHER VEHICULAR')
-chart.Correlation(new_df, histogram=TRUE, pch=19)
+new_df=as.data.frame(cbind(df_temperature1$`sum(Temp)`,inattention$`total.count`,factor2$total.count,factor3$total.count,factor4$total.count,factor5$total.count))
+colnames(new_df)=c('Temperature','Distraction','Fail to Yield','Follow Too Closely','Backing Unsafe','Other vehicular')
+ggpairs(new_df)
 ```
 
 
@@ -428,9 +434,10 @@ chart.Correlation(new_df, histogram=TRUE, pch=19)
 
 
 
-Part2
-Rush hours have more collision
-distraction collision by time
+## Rush Hour:
+
+At this step, we have identified the correlation between seasonality and contribution factors of collisions. Conclusions drawn from previous analysis make us wonder whether there are times in a day, such as rush hours, that are more prone to collisions than the others.
+
 ```{r}
 df_time=df2013_2018%>%mutate(ACCIDENT.TIME=as.character(ACCIDENT.TIME))
 colnames(df_time)[2]='time'
@@ -454,17 +461,24 @@ ggplot(data=df_time_summary,aes(x=time,y=`total.count`,color=year))+
   guides(color = guide_legend(reverse = TRUE))+
   scale_x_datetime(date_labels = "%I:%M %p")+
   xlab('Hour')+
-  ylab('number of accident')+
-  ggtitle('Number of Accident by Hour in different Year')
+  ylab('Number of Collisions')+
+  ggtitle('Number of Collisions per Hour by Year')
 ```
-By Hour(Combine all year)
+
+
+In the line plot above, we construct a direct year-on-year comparison showing the number of collisions by different time of a day. The results show strikingly uniform patterns, such that, regardless of what year, number of collisions uniformly spike during rush hours (8am and 5pm).
+
+
+In order to derive more actionable insights, we started by looking at proportion of collisions caused by distraction, by different time of the year. And we notice that these two plots are almost identical in trends, both spiking during rush hours and fading after leaving for work. 
+
+
 ```{r}
 df_hour_total=df_time_summary
 ```
 ```{r}
 df_hour_total=df_hour_total%>%group_by(time)%>%summarise(newtotal=sum(`total.count`))
 ```
-Distraction
+
 
 ```{r}
 df_distraction=df2013_2018[df2013_2018$`CONT.FACTOR.VEHICLE.1`=='DRIVER INATTENTION/DISTRACTION',]
@@ -498,8 +512,71 @@ ggplot(data=df_distraction_summary,aes(x=time,y=`total.count`))+
   geom_line()+
   scale_x_datetime(date_labels = "%I:%M %p")+
   ylim(0.15, 0.2)+
-  xlab('Ratio')+
-  ylab('number of accident')+
-  ggtitle('Ratio of Distraction by Hour')
+  xlab('Hour')+
+  ylab('Ratio')+
+  ggtitle('Porpotion of Collisions Caused by Distraction')
 ```
 
+More importantly, after a long day of work, people tend to be more prone to be distracted on their way home and on their way to work.
+
+Therefore, we conclude that, during rush hours, there tends to be more collisions, possibly due to higher traffic volume, and, more importantly, during rush hours, people are more likely to get distracted while driving.
+
+To sum up, we strongly recommend drivers to stay more vigilant during rush hours, especially on their way home.
+
+## Precipitation:
+
+At this point, we have drawn more conclusions regarding the correlation between number of collision, and distraction, by bringing more variables into the equation. However, we haven’t discussed what exactly causes distraction, the number 1 contributing factor for NYC collisions? Are tired people simply more likely to be distracted, or is there an external factor making drivers more likely to be distracted.
+
+However, due to the limited data source, we could only try to answer this question by analyzing how whether, especially rain, could increase the possibility of getting distracted.
+
+
+```{r}
+df_weather=read.csv('../weather.csv')
+```
+```{r}
+df_weather=df_weather[str_trim(df_weather$`REPORT_TYPE`)=='SOD',]
+df_weather$DATE=substr(df_weather$DATE,0,10)
+df_weather$year=substr(df_weather$DATE,0,4)
+```
+```{r}
+df_weather2013_18= df_weather[(df_weather$year > "2012" & df_weather$year < "2019"),]
+df_weather2013_18=mutate(df_weather2013_18, DailyPrecipitation = ifelse(DailyPrecipitation == "T", "0", as.character(DailyPrecipitation)))
+```
+```{r}
+df_weather2013_18$DailyPrecipitation=as.numeric(df_weather2013_18$DailyPrecipitation)
+```
+```{r}
+df_pecipitation=as.data.frame(cbind(df_weather2013_18$DATE,df_weather2013_18$DailyPrecipitation))
+colnames(df_pecipitation)=c('MDY','precipitation')
+```
+```{r}
+df_pecipitation$MDY=as.Date(df_pecipitation$MDY)
+df_pecipitation$precipitation=as.numeric(as.character(df_pecipitation$precipitation))
+```
+
+
+```{r}
+df_distraction_daily=df2013_2018[df2013_2018$CONT.FACTOR.VEHICLE.1=='DRIVER INATTENTION/DISTRACTION',]
+df_distraction_daily=df_distraction_daily%>%
+  group_by(df_distraction_daily$ACCIDENT.DATE)%>%
+  summarise(total.count = n())
+colnames(df_distraction_daily)=c('MDY','value')
+df_distraction_daily=df_distraction_daily%>%
+  mutate(MDY=as.character(MDY))%>%
+  mutate(MDY=as.Date(MDY,format("%m/%d/%Y")))
+```
+```{r}
+temp=merge(x = df_distraction_daily, y =df_pecipitation, by = "MDY", all.x = TRUE)
+temp$precipitation=na.fill(temp$precipitation,0)
+df_precpitation_cor=merge(x=temp,y=df_date,by='MDY',all.x=TRUE)
+colnames(df_precpitation_cor)=c('time','distraction','precipitation','total.collision')
+df_precpitation_cor=df_precpitation_cor%>%select(distraction,precipitation,`total.collision`)%>%filter(precipitation!=0)
+```
+
+```{r}
+ggpairs(df_precpitation_cor)
+```
+
+Unfortunately, according to the correlation matrix above, we don’t identify any significant correlation between precipitation and number of collisions, and between precipitation and number of collisions caused by distraction.
+
+Therefore, a wiser advice at this point is that people shouldn’t blame rain for distraction, and it is the drivers themselves that are causing those collisions.
