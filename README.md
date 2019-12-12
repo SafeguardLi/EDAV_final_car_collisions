@@ -1,18 +1,19 @@
 # NYC Vehicle Collisions Analysis - EDAV Final Project
 Date: December 2019
+
 Authors: Yaoyi Wang, Qiang Zhao, Wangzhi Li and Weixi Yao
 
 ## About This Repo
 
 This repo contains all the codes and html files that related to this project. Since the original data is oversize, we only provide links here.
 
-### Motor Vehicle Collisions - Crashes
+- Motor Vehicle Collisions - Crashes
 Data url: https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95
 
-### Temperature Data
+- Temperature Data
 Data url: https://www.weather.gov/media/okx/Climate/CentralPark/monthlyannualtemp.pdf
 
-### Precipitation Data 
+- Precipitation Data 
 Data url: https://www.ncdc.noaa.gov/cdo-web/datatools/lcd
 
 ## Intro to Project 
