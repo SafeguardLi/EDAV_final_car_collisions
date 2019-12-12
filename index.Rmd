@@ -1,6 +1,6 @@
 --- 
 title: "NYC Motor Vehicle Collisions"
-author: "Mike Yao-Yi Wang.  Qiang Zhao, Wangzhi Li, and Weixi Yao"
+author: "Mike Yao-Yi Wang, Qiang Zhao, Wangzhi Li, and Weixi Yao"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
@@ -9,9 +9,11 @@ site: bookdown::bookdown_site
 
 ## Motivation - Why do we pick this topic?
 
-According to the Washington Post, there are about 1.7 million rear-end collisions on U.S. roads each year, and about 17,000 people die in those collisions and another 500,000 are hurt. 
+![Graph source: https://media.giphy.com/media/3o6MbnoYpuHuNbsNzi/giphy.gif](https://media.giphy.com/media/3o6MbnoYpuHuNbsNzi/giphy.gif)
 
-New York City alone contributes roughly 200,000 collisions and 56,000 injuries each year, which is around 10 percent of the national total, making collision an issue worth tackling.
+According to the Washington Post, there are about **1.7 million** rear-end collisions on U.S. roads each year, and about **17,000** people die in those collisions and another **500,000** are hurt. 
+
+New York City alone contributes roughly **200,000** collisions and **56,000** injuries each year, which is around 10 percent of the national total, making collision an issue worth tackling.
 
 Although high-tech car manufacturers such as Volvo, BMW and Tesla are spending a huge amount of effort making collision avoidance systems every year, such as the emergency braking system, standard equipment in their vehicles, we believe that, while waiting for technical advancement of automobiles, there are simple things we can do from day to day to help us stay safer from collisions.
 
@@ -21,25 +23,21 @@ The goal of this project is to identify useful advice for all people involved in
 
 ## Value - Why do we believe that using NYC collision data to answer our questions is meaningful?
 
-1. Understanding the underlying pattern behind collision data is the first step towards staying safer from collisions.
+1. **Understanding the underlying pattern behind collision data is the first step towards staying safer from collisions.** Decoding the traffic system is hard and it is very difficult for anybody to give definitive solutions or answers to traffic-related issues, such as congestion and collision. However, that doesn't mean we should stop exploring on the underlying patterns, if there are any, of collision incidents. We believe that diving in with a data science perspective might shed new light on this complex topic.
 
-- Decoding the traffic system is hard and it is very difficult for anybody to give definitive solutions or answers to traffic-related issues, such as congestion and collision. However, that doesn't mean we should stop exploring on the underlying patterns, if there are any, of collision incidents. We believe that diving in with a data science perspective might shed new light on this complex topic.
+2. **The advice found online are too "general" and are not actionable enough for cities like NYC.** As the third most traffic-congested city in the world, NYC faces lots of traffic issues that other cities might not face, and advice such as "don't text and drive" are far from enough for NYC. That makes it interesting and necessary to analyze NYC collision data and, therefore, finding actionable suggestions for NYC is not only beneficial to people living in NYC but also an important step towards decoding more complicated traffic systems.
 
-2. The advice found online are too "general" and are not actionable enough for cities like NYC. 
-
-- As the third most traffic-congested city in the world, NYC faces lots of traffic issues that other cities might not face, and advice such as "don't text and drive" are far from enough for NYC. That makes it interesting and necessary to analyze NYC collision data and, therefore, finding actionable suggestions for NYC is not only beneficial to people living in NYC but also an important step towards decoding more complicated traffic systems.
-
-3. As (future) data scientists, we believe that we are obligated to provide useful and actionable insights to help people better stay away from collisions, and collision data from NYC gives us the opportunities to fulfill this obligation.
-
-- Although we are not the first groups of people who try to analyze NYC collision data, we believe that, as more data coming in each year, it is important to consistently review the trends, hopefully generating more up-to-date insights.
+3. **As (future) data scientists, we believe that we are obligated to provide useful and actionable insights to help people better stay away from collisions, and collision data from NYC gives us the opportunities to fulfill this obligation.** Although we are not the first groups of people who try to analyze NYC collision data, we believe that, as more data coming in each year, it is important to consistently review the trends, hopefully generating more up-to-date insights.
 
 ## Project Outline
 
 In this project, we will draw and visualize the correlation between the number of collisions, the severity of collisions, and features such as seasonality, regionality, and human factors. From the correlation drawn, we then formulate the following three advice that people can easily follow and fundamentally helpful in avoiding collisions:
 
-1. During summer time, don’t follow too closely.
-2. During rush hours, especially on your way home, stay vigilant while driving.
-3. At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.
+1. **During summer time, don’t follow too closely.**
+
+2. **During rush hours, especially on your way home, stay vigilant while driving.**
+
+3. **At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.**
 
 ## Repository Link
 

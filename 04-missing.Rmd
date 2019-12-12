@@ -11,10 +11,11 @@ library(readr)
 library(tidyr)
 library(tidyverse)
 library(extracat)
-library(plyr)
+library(dplyr)
 #where I save my original data
 df=read.csv("../Motor_Vehicle_Collisions_-_Crashes.csv", header = T, na.string = c("", "NA"), sep = ",")
 ```
+
 ```{r fig.height = 15, warning=FALSE}
 df$year = substr(df$ACCIDENT.DATE, 7, 10)
 df2013_2018 = df[(df$year > "2012" & df$year < "2019"),]
@@ -69,7 +70,4 @@ The first pattern makes sense because these two variables are just representatio
 The second pattern makes sense as well because it is very rare for a single collision incident to have numerous contributing factors.
 
 To tackle these missing value patterns as well as to make our analysis less distracted, we mainly focus on the contributing factor vehicle 1 and vehicle type code 1 in our analysis as the “main” contributing factors.
-
-
-```
 

@@ -21,7 +21,7 @@
   
   
 
-<meta name="author" content="Mike Yao-Yi Wang. Qiang Zhao, Wangzhi Li, and Weixi Yao" />
+<meta name="author" content="Mike Yao-Yi Wang, Qiang Zhao, Wangzhi Li, and Weixi Yao" />
 
 
 <meta name="date" content="2019-12-12" />
@@ -50,14 +50,6 @@
 
 
 
-<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
-<link href="libs/dygraphs-1.1.1/dygraph.css" rel="stylesheet" />
-<script src="libs/dygraphs-1.1.1/dygraph-combined.js"></script>
-<script src="libs/dygraphs-1.1.1/shapes.js"></script>
-<script src="libs/moment-2.8.4/moment.js"></script>
-<script src="libs/moment-timezone-0.2.5/moment-timezone-with-data.js"></script>
-<script src="libs/moment-fquarter-1.0.0/moment-fquarter.min.js"></script>
-<script src="libs/dygraphs-binding-1.1.1.6/dygraphs.js"></script>
 
 
 
@@ -141,15 +133,19 @@
             <section class="normal" id="section-">
 <div id="header">
 <h1 class="title">NYC Motor Vehicle Collisions</h1>
-<p class="author"><em>Mike Yao-Yi Wang. Qiang Zhao, Wangzhi Li, and Weixi Yao</em></p>
+<p class="author"><em>Mike Yao-Yi Wang, Qiang Zhao, Wangzhi Li, and Weixi Yao</em></p>
 <p class="date"><em>2019-12-12</em></p>
 </div>
 <div id="before-we-start" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Before we start:</h1>
 <div id="motivation---why-do-we-pick-this-topic" class="section level2">
 <h2><span class="header-section-number">1.1</span> Motivation - Why do we pick this topic?</h2>
-<p>According to the Washington Post, there are about 1.7 million rear-end collisions on U.S. roads each year, and about 17,000 people die in those collisions and another 500,000 are hurt.</p>
-<p>New York City alone contributes roughly 200,000 collisions and 56,000 injuries each year, which is around 10 percent of the national total, making collision an issue worth tackling.</p>
+<div class="figure">
+<img src="https://media.giphy.com/media/3o6MbnoYpuHuNbsNzi/giphy.gif" alt="Graph source: https://media.giphy.com/media/3o6MbnoYpuHuNbsNzi/giphy.gif" />
+<p class="caption">Graph source: <a href="https://media.giphy.com/media/3o6MbnoYpuHuNbsNzi/giphy.gif" class="uri">https://media.giphy.com/media/3o6MbnoYpuHuNbsNzi/giphy.gif</a></p>
+</div>
+<p>According to the Washington Post, there are about <strong>1.7 million</strong> rear-end collisions on U.S. roads each year, and about <strong>17,000</strong> people die in those collisions and another <strong>500,000</strong> are hurt.</p>
+<p>New York City alone contributes roughly <strong>200,000</strong> collisions and <strong>56,000</strong> injuries each year, which is around 10 percent of the national total, making collision an issue worth tackling.</p>
 <p>Although high-tech car manufacturers such as Volvo, BMW and Tesla are spending a huge amount of effort making collision avoidance systems every year, such as the emergency braking system, standard equipment in their vehicles, we believe that, while waiting for technical advancement of automobiles, there are simple things we can do from day to day to help us stay safer from collisions.</p>
 </div>
 <div id="objective---what-is-the-main-takeaway-we-want-you-to-get-out-of-this-project" class="section level2">
@@ -159,31 +155,18 @@
 <div id="value---why-do-we-believe-that-using-nyc-collision-data-to-answer-our-questions-is-meaningful" class="section level2">
 <h2><span class="header-section-number">1.3</span> Value - Why do we believe that using NYC collision data to answer our questions is meaningful?</h2>
 <ol style="list-style-type: decimal">
-<li>Understanding the underlying pattern behind collision data is the first step towards staying safer from collisions.</li>
+<li><p><strong>Understanding the underlying pattern behind collision data is the first step towards staying safer from collisions.</strong> Decoding the traffic system is hard and it is very difficult for anybody to give definitive solutions or answers to traffic-related issues, such as congestion and collision. However, that doesn’t mean we should stop exploring on the underlying patterns, if there are any, of collision incidents. We believe that diving in with a data science perspective might shed new light on this complex topic.</p></li>
+<li><p><strong>The advice found online are too “general” and are not actionable enough for cities like NYC.</strong> As the third most traffic-congested city in the world, NYC faces lots of traffic issues that other cities might not face, and advice such as “don’t text and drive” are far from enough for NYC. That makes it interesting and necessary to analyze NYC collision data and, therefore, finding actionable suggestions for NYC is not only beneficial to people living in NYC but also an important step towards decoding more complicated traffic systems.</p></li>
+<li><p><strong>As (future) data scientists, we believe that we are obligated to provide useful and actionable insights to help people better stay away from collisions, and collision data from NYC gives us the opportunities to fulfill this obligation.</strong> Although we are not the first groups of people who try to analyze NYC collision data, we believe that, as more data coming in each year, it is important to consistently review the trends, hopefully generating more up-to-date insights.</p></li>
 </ol>
-<ul>
-<li>Decoding the traffic system is hard and it is very difficult for anybody to give definitive solutions or answers to traffic-related issues, such as congestion and collision. However, that doesn’t mean we should stop exploring on the underlying patterns, if there are any, of collision incidents. We believe that diving in with a data science perspective might shed new light on this complex topic.</li>
-</ul>
-<ol start="2" style="list-style-type: decimal">
-<li>The advice found online are too “general” and are not actionable enough for cities like NYC.</li>
-</ol>
-<ul>
-<li>As the third most traffic-congested city in the world, NYC faces lots of traffic issues that other cities might not face, and advice such as “don’t text and drive” are far from enough for NYC. That makes it interesting and necessary to analyze NYC collision data and, therefore, finding actionable suggestions for NYC is not only beneficial to people living in NYC but also an important step towards decoding more complicated traffic systems.</li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>As (future) data scientists, we believe that we are obligated to provide useful and actionable insights to help people better stay away from collisions, and collision data from NYC gives us the opportunities to fulfill this obligation.</li>
-</ol>
-<ul>
-<li>Although we are not the first groups of people who try to analyze NYC collision data, we believe that, as more data coming in each year, it is important to consistently review the trends, hopefully generating more up-to-date insights.</li>
-</ul>
 </div>
 <div id="project-outline" class="section level2">
 <h2><span class="header-section-number">1.4</span> Project Outline</h2>
 <p>In this project, we will draw and visualize the correlation between the number of collisions, the severity of collisions, and features such as seasonality, regionality, and human factors. From the correlation drawn, we then formulate the following three advice that people can easily follow and fundamentally helpful in avoiding collisions:</p>
 <ol style="list-style-type: decimal">
-<li>During summer time, don’t follow too closely.</li>
-<li>During rush hours, especially on your way home, stay vigilant while driving.</li>
-<li>At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.</li>
+<li><p><strong>During summer time, don’t follow too closely.</strong></p></li>
+<li><p><strong>During rush hours, especially on your way home, stay vigilant while driving.</strong></p></li>
+<li><p><strong>At this point, no external factor has been found that has a strong correlation with collision caused by distraction. So don’t blame bad weather.</strong></p></li>
 </ol>
 </div>
 <div id="repository-link" class="section level2">
